@@ -23,15 +23,53 @@ export default async function Dashboard() {
     });
   }
 
-  return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">
-        Calorie Compass
-      </h1>
+return (
+  <main className="p-8">
+    <h1 className="text-4xl font-bold mb-8">
+      Calorie Compass
+    </h1>
 
-      <p>User Created Successfully</p>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="border rounded-lg p-6">
+        <h2 className="text-sm text-gray-500">
+          Calories Today
+        </h2>
 
-      <pre>{user.id}</pre>
+        <p className="text-4xl font-bold mt-2">
+          0
+        </p>
+      </div>
+
+      <div className="border rounded-lg p-6">
+        <h2 className="text-sm text-gray-500">
+          Protein
+        </h2>
+
+        <p className="text-4xl font-bold mt-2">
+          0g
+        </p>
+      </div>
+
+      <div className="border rounded-lg p-6">
+        <h2 className="text-sm text-gray-500">
+          Carbs
+        </h2>
+
+        <p className="text-4xl font-bold mt-2">
+          0g
+        </p>
+      </div>
+
+      <div className="border rounded-lg p-6">
+        <h2 className="text-sm text-gray-500">
+          Fat
+        </h2>
+
+        <p className="text-4xl font-bold mt-2">
+          0g
+        </p>
+      </div>
     </div>
-  );
+  </main>
+);
 }
