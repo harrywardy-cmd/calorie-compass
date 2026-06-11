@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { deleteMeal } from "./actions";
 import { Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 
 import {
   AlertDialog,
@@ -234,6 +235,13 @@ export default async function Dashboard() {
                       {meal.calories} kcal
                     </p>
                   </div>
+
+                  <Link href={`/meals/${meal.id}/edit`}>
+                    <Pencil
+                      size={18}
+                      className="text-blue-600"
+                    />
+                  </Link>
 
                   <form action={deleteMeal}>
                     <input
