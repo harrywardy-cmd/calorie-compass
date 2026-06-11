@@ -28,6 +28,8 @@ model Meal {
 
   mealName  String
 
+  mealType   String?
+
   calories  Int
 
   protein   Float    @default(0)

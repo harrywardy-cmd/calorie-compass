@@ -1,45 +1,77 @@
 import { createMeal } from "./actions";
 
 export default function NewMealPage() {
-  return (
-    <main className="max-w-xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">
-        Add Meal
-      </h1>
+    return (
+        <main className="max-w-xl mx-auto p-8">
+            <h1 className="text-3xl font-bold mb-6">
+                Add Meal
+            </h1>
 
-      <form action={createMeal} className="space-y-4">
-        <div>
-          <label className="block mb-2">
-            Meal Name
-          </label>
+            <form action={createMeal} className="space-y-4">
+                <div>
+                    <label className="block mb-2">
+                        Meal Name
+                    </label>
 
-          <input
-            name="mealName"
-            required
-            className="w-full border rounded p-2"
-          />
-        </div>
+                    <input
+                        name="mealName"
+                        required
+                        className="w-full border rounded p-2"
+                    />
+                </div>
 
-        <div>
-          <label className="block mb-2">
-            Calories
-          </label>
+                <div>
+                    <label className="block mb-2">
+                        Calories
+                    </label>
 
-          <input
-            name="calories"
-            type="number"
-            required
-            className="w-full border rounded p-2"
-          />
-        </div>
+                    <input
+                        name="calories"
+                        type="number"
+                        required
+                        className="w-full border rounded p-2"
+                    />
+                </div>
+                <div>
+                    <label className="block mb-2">
+                        Meal Type
+                    </label>
 
-        <button
-          type="submit"
-          className="border rounded px-4 py-2"
-        >
-          Save Meal
-        </button>
-      </form>
-    </main>
-  );
+                    <select
+                        name="mealType"
+                        className="w-full border rounded p-2"
+                        required
+                    >
+                        <option value="">
+                            Select Meal Type
+                        </option>
+
+                        <option value="Breakfast">
+                            Breakfast
+                        </option>
+
+                        <option value="Lunch">
+                            Lunch
+                        </option>
+
+                        <option value="Dinner">
+                            Dinner
+                        </option>
+
+                        <option value="Snack">
+                            Snack
+                        </option>
+                    </select>
+                </div>
+
+
+                <button
+                    type="submit"
+                    className="border rounded px-4 py-2"
+                >
+                    Save Meal
+                </button>
+            </form>
+        </main>
+    );
 }

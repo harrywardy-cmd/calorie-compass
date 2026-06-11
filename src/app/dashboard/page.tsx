@@ -227,6 +227,10 @@ export default async function Dashboard() {
                     </p>
 
                     <p className="text-sm text-gray-500">
+                      {meal.mealType}
+                    </p>
+
+                    <p className="text-sm text-gray-500">
                       {meal.calories} kcal
                     </p>
                   </div>
