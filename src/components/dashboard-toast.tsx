@@ -5,20 +5,27 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 export default function DashboardToast() {
-  const params = useSearchParams();
-  const shown = useRef(false);
+    const params = useSearchParams();
+    const shown = useRef(false);
 
-  useEffect(() => {
-    if (shown.current) return;
+    useEffect(() => {
+        if (shown.current) return;
 
-    if (params.get("success") === "meal-added") {
-      shown.current = true;
+        if (params.get("success") === "meal-added") {
+            shown.current = true;
 
-      toast.success(
-        `🍽️ ${params.get("meal")} added successfully!`
-      );
-    }
-  }, [params]);
+            toast.success(
+                `🍽️ ${params.get("meal")} added successfully!`, {
+                style: {
+                    background:
+                        "linear-gradient(135deg, #2563EB, #06B6D4)",
+                    color: "#FFFFFF",
+                    border: "none",
+                },
+            }
+            );
+        }
+    }, [params]);
 
-  return null;
+    return null;
 }
