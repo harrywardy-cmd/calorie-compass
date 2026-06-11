@@ -6,6 +6,7 @@ import Link from "next/link";
 import { deleteMeal } from "./actions";
 import { Trash2 } from "lucide-react";
 import { Pencil } from "lucide-react";
+import Image from "next/image";
 
 import {
   AlertDialog,
@@ -83,10 +84,48 @@ export default async function Dashboard() {
 
   const calorieGoal = 2200;
 
-  const caloriePercentage = Math.min(
-    Math.round((totalCalories / calorieGoal) * 100),
-    100
+  const caloriePercentage = Math.round(
+    (totalCalories / calorieGoal) * 100
   );
+
+  let progressImage = "/progress/seed.png";
+  if (caloriePercentage >= 120) {
+    progressImage = "/progress/dead.png";
+  } else if (caloriePercentage >= 100) {
+    progressImage = "/progress/golden-tree.png";
+  } else if (caloriePercentage >= 75) {
+    progressImage = "/progress/fruit-tree.png";
+  } else if (caloriePercentage >= 50) {
+    progressImage = "/progress/tree.png";
+  } else if (caloriePercentage >= 25) {
+    progressImage = "/progress/sprout.png";
+  }
+
+  let progressMessage = "Let's get started!";
+
+  if (caloriePercentage >= 120) {
+    progressMessage = "You've gone well over your goal today.";
+  } else if (caloriePercentage > 100) {
+    progressMessage = "You've exceeded your goal.";
+  } else if (caloriePercentage === 100) {
+    progressMessage = "Goal achieved!";
+  } else if (caloriePercentage >= 75) {
+    progressMessage = "Almost there!";
+  } else if (caloriePercentage >= 50) {
+    progressMessage = "Great progress!";
+  } else if (caloriePercentage >= 25) {
+    progressMessage = "Building momentum!";
+  }
+
+  let progressBarClass = "bg-blue-500";
+
+  if (caloriePercentage >= 120) {
+    progressBarClass = "bg-red-600";
+  } else if (caloriePercentage > 100) {
+    progressBarClass = "bg-orange-500";
+  } else if (caloriePercentage === 100) {
+    progressBarClass = "bg-green-500";
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -131,17 +170,33 @@ export default async function Dashboard() {
 
           <div className="w-full bg-gray-200 rounded-full h-4">
             <div
-              className="bg-green-500 h-4 rounded-full transition-all"
+              className={`${progressBarClass} h-4 rounded-full`}
               style={{
-                width: `${caloriePercentage}%`,
+                width: `${Math.min(caloriePercentage, 100)}%`,
               }}
             />
           </div>
 
+          <p className="mt-2 text-sm font-medium">
+            {progressMessage}
+          </p>
+
+          <p className="text-sm text-gray-500">
+            {totalCalories} / {calorieGoal} kcal ({caloriePercentage}%)
+          </p>
+
           <p className="mt-2 text-sm text-gray-500">
             {caloriePercentage}% of daily goal reached
           </p>
+          <Image
+            src={progressImage}
+            alt="Progress"
+            width={120}
+            height={120}
+          />
+
         </div>
+
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
