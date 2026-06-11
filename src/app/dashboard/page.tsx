@@ -1,6 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
+import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import { deleteMeal } from "./actions";
+
 
 export default async function Dashboard() {
   const { userId } = await auth();
@@ -23,51 +27,192 @@ export default async function Dashboard() {
     });
   }
 
+  const meals = await prisma.meal.findMany({
+  where: {
+    userId,
+  },
+});
+
+const totalCalories = meals.reduce(
+  (sum, meal) => sum + meal.calories,
+  0
+);
+
+const totalProtein = meals.reduce(
+  (sum, meal) => sum + meal.protein,
+  0
+);
+
+const totalCarbs = meals.reduce(
+  (sum, meal) => sum + meal.carbs,
+  0
+);
+
+const totalFat = meals.reduce(
+  (sum, meal) => sum + meal.fat,
+  0
+);
+
+const calorieGoal = 2200;
+
+const caloriePercentage = Math.min(
+  Math.round((totalCalories / calorieGoal) * 100),
+  100
+);
+
 return (
-  <main className="p-8">
-    <h1 className="text-4xl font-bold mb-8">
-      Calorie Compass
-    </h1>
+  <main className="min-h-screen bg-gray-50">
+    {/* Header */}
+    <div className="border-b bg-white">
+      <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">
+            🧭 Calorie Compass
+          </h1>
 
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div className="border rounded-lg p-6">
-        <h2 className="text-sm text-gray-500">
-          Calories Today
-        </h2>
+          <p className="text-sm text-gray-500">
+            Track calories and nutrition effortlessly
+          </p>
+        </div>
 
-        <p className="text-4xl font-bold mt-2">
-          0
+        <div className="flex items-center gap-4">
+          <Link
+            href="/meals/new"
+            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+          >
+            + Add Meal
+          </Link>
+
+          <UserButton />
+        </div>
+      </div>
+    </div>
+
+    <div className="max-w-7xl mx-auto p-8">
+      {/* Daily Goal */}
+      <div className="bg-white border rounded-xl p-6 mb-8">
+        <div className="flex justify-between mb-3">
+          <h2 className="font-semibold">
+            Daily Goal Progress
+          </h2>
+
+          <span className="text-sm text-gray-500">
+            {totalCalories} / {calorieGoal} kcal
+          </span>
+        </div>
+
+        <div className="w-full bg-gray-200 rounded-full h-4">
+          <div
+            className="bg-green-500 h-4 rounded-full transition-all"
+            style={{
+              width: `${caloriePercentage}%`,
+            }}
+          />
+        </div>
+
+        <p className="mt-2 text-sm text-gray-500">
+          {caloriePercentage}% of daily goal reached
         </p>
       </div>
 
-      <div className="border rounded-lg p-6">
-        <h2 className="text-sm text-gray-500">
-          Protein
-        </h2>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white border rounded-xl p-6">
+          <h2 className="text-sm text-gray-500">
+            Calories Today
+          </h2>
 
-        <p className="text-4xl font-bold mt-2">
-          0g
-        </p>
+          <p className="text-4xl font-bold mt-2">
+            {totalCalories}
+          </p>
+
+          <p className="text-sm text-gray-500 mt-1">
+            kcal
+          </p>
+        </div>
+
+        <div className="bg-white border rounded-xl p-6">
+          <h2 className="text-sm text-gray-500">
+            Protein
+          </h2>
+
+          <p className="text-4xl font-bold mt-2">
+            {totalProtein}g
+          </p>
+        </div>
+
+        <div className="bg-white border rounded-xl p-6">
+          <h2 className="text-sm text-gray-500">
+            Carbs
+          </h2>
+
+          <p className="text-4xl font-bold mt-2">
+            {totalCarbs}g
+          </p>
+        </div>
+
+        <div className="bg-white border rounded-xl p-6">
+          <h2 className="text-sm text-gray-500">
+            Fat
+          </h2>
+
+          <p className="text-4xl font-bold mt-2">
+            {totalFat}g
+          </p>
+        </div>
       </div>
 
-      <div className="border rounded-lg p-6">
-        <h2 className="text-sm text-gray-500">
-          Carbs
+      {/* Recent Meals */}
+      <div className="bg-white border rounded-xl p-6">
+        <h2 className="text-2xl font-bold mb-4">
+          Recent Meals
         </h2>
 
-        <p className="text-4xl font-bold mt-2">
-          0g
-        </p>
-      </div>
+        {meals.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-5xl mb-4">🍎</p>
 
-      <div className="border rounded-lg p-6">
-        <h2 className="text-sm text-gray-500">
-          Fat
-        </h2>
+            <h3 className="font-semibold text-lg">
+              No meals logged yet
+            </h3>
 
-        <p className="text-4xl font-bold mt-2">
-          0g
-        </p>
+            <p className="text-gray-500 mt-2">
+              Add your first meal to start tracking.
+            </p>
+
+            <Link
+              href="/meals/new"
+              className="inline-block mt-4 bg-black text-white px-4 py-2 rounded-lg"
+            >
+              Add First Meal
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {meals.map((meal) => (
+              <div
+                key={meal.id}
+                className="flex justify-between items-center border rounded-lg p-4 hover:bg-gray-50"
+              >
+                <div>
+                  <p className="font-medium">
+                    {meal.mealName}
+                  </p>
+
+                  <p className="text-sm text-gray-500">
+                    {new Date(meal.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="font-bold">
+                    {meal.calories} kcal
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   </main>
