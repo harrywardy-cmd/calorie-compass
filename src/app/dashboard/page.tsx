@@ -40,9 +40,23 @@ export default async function Dashboard() {
     });
   }
 
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
   const meals = await prisma.meal.findMany({
     where: {
       userId,
+      createdAt: {
+        gte: today,
+        lt: tomorrow,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
