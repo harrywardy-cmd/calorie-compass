@@ -1,77 +1,97 @@
+import Link from "next/link";
 import { createMeal } from "./actions";
 
 export default function NewMealPage() {
-    return (
-        <main className="max-w-xl mx-auto p-8">
-            <h1 className="text-3xl font-bold mb-6">
-                Add Meal
-            </h1>
+  return (
+    <main className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border p-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">
+            Add Meal
+          </h1>
 
-            <form action={createMeal} className="space-y-4">
-                <div>
-                    <label className="block mb-2">
-                        Meal Name
-                    </label>
+          <p className="text-gray-500 mt-2">
+            Log a meal and track your daily nutrition.
+          </p>
+        </div>
 
-                    <input
-                        name="mealName"
-                        required
-                        className="w-full border rounded p-2"
-                    />
-                </div>
+        <form action={createMeal} className="space-y-5">
+          <div>
+            <label className="block mb-2 text-sm font-medium">
+              Meal Name
+            </label>
 
-                <div>
-                    <label className="block mb-2">
-                        Calories
-                    </label>
+            <input
+              name="mealName"
+              required
+              placeholder="Chicken Wrap"
+              className="w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
 
-                    <input
-                        name="calories"
-                        type="number"
-                        required
-                        className="w-full border rounded p-2"
-                    />
-                </div>
-                <div>
-                    <label className="block mb-2">
-                        Meal Type
-                    </label>
+          <div>
+            <label className="block mb-2 text-sm font-medium">
+              Calories
+            </label>
 
-                    <select
-                        name="mealType"
-                        className="w-full border rounded p-2"
-                        required
-                    >
-                        <option value="">
-                            Select Meal Type
-                        </option>
+            <input
+              name="calories"
+              type="number"
+              required
+              placeholder="650"
+              className="w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
 
-                        <option value="Breakfast">
-                            Breakfast
-                        </option>
+          <div>
+            <label className="block mb-2 text-sm font-medium">
+              Meal Type
+            </label>
 
-                        <option value="Lunch">
-                            Lunch
-                        </option>
+            <select
+              name="mealType"
+              required
+              className="w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-black"
+            >
+              <option value="">
+                Select Meal Type
+              </option>
 
-                        <option value="Dinner">
-                            Dinner
-                        </option>
+              <option value="Breakfast">
+                🍳 Breakfast
+              </option>
 
-                        <option value="Snack">
-                            Snack
-                        </option>
-                    </select>
-                </div>
+              <option value="Lunch">
+                🥪 Lunch
+              </option>
 
+              <option value="Dinner">
+                🍝 Dinner
+              </option>
 
-                <button
-                    type="submit"
-                    className="border rounded px-4 py-2"
-                >
-                    Save Meal
-                </button>
-            </form>
-        </main>
-    );
+              <option value="Snack">
+                🍎 Snack
+              </option>
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Link
+              href="/dashboard"
+              className="rounded-lg border px-4 py-2 hover:bg-gray-100"
+            >
+              Cancel
+            </Link>
+
+            <button
+              type="submit"
+              className="rounded-lg bg-black text-white px-5 py-2 hover:bg-gray-800"
+            >
+              Save Meal
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
 }
