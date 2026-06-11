@@ -80,7 +80,7 @@ export default function NewMealPage() {
               href="/dashboard"
               className="rounded-lg border px-4 py-2 hover:bg-gray-100"
             >
-              Cancel
+              Back
             </Link>
 
             <button
