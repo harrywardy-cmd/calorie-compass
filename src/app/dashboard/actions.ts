@@ -2,13 +2,18 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
-export async function deleteMeal(mealId: string) {
+export async function deleteMeal(formData: FormData) {
   const { userId } = await auth();
 
   if (!userId) {
     throw new Error("Unauthorized");
   }
+
+  const mealId = formData.get("mealId") as string;
+
+  console.log("Deleting meal:", mealId);
 
   const meal = await prisma.meal.findUnique({
     where: {
@@ -29,4 +34,6 @@ export async function deleteMeal(mealId: string) {
       id: mealId,
     },
   });
+
+  revalidatePath("/dashboard");
 }
