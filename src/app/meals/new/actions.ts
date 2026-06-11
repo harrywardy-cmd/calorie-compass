@@ -2,28 +2,35 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 export async function createMeal(formData: FormData) {
-    const { userId } = await auth();
+  const { userId } = await auth();
 
-    if (!userId) {
-        throw new Error("Unauthorized");
-    }
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
 
-    const mealName = formData.get("mealName") as string;
-    const calories = Number(formData.get("calories"));
-    const mealType = formData.get("mealType") as string;
+  const mealName = formData.get("mealName") as string;
+  const calories = Number(formData.get("calories"));
+  const mealType = formData.get("mealType") as string;
 
-    await prisma.meal.create({
-        data: {
-            userId,
-            mealName,
-            mealType,
-            calories,
-            protein: 0,
-            carbs: 0,
-            fat: 0,
-            imageUrl: "",
-        },
-    });
+  await prisma.meal.create({
+    data: {
+      userId,
+      mealName,
+      mealType,
+      calories,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+      imageUrl: "",
+    },
+  });
+
+  redirect(
+    `/dashboard?success=meal-added&meal=${encodeURIComponent(
+      mealName
+    )}&calories=${calories}`
+  );
 }

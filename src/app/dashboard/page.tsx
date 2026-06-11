@@ -8,6 +8,7 @@ import { Trash2 } from "lucide-react";
 import { Pencil } from "lucide-react";
 import Image from "next/image";
 import { Settings } from "lucide-react";
+import DashboardToast from "@/components/dashboard-toast";
 
 
 import {
@@ -174,7 +175,9 @@ export default async function Dashboard() {
   }));
 
   return (
+    
     <main className="min-h-screen bg-gray-50">
+      <DashboardToast />
       {/* Header */}
       <div className="border-b bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
