@@ -3,94 +3,114 @@ import { createMeal } from "./actions";
 
 export default function NewMealPage() {
   return (
-    <main className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border p-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">
-            Add Meal
+    <main className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4">
+      <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-8 text-white">
+          <h1 className="text-4xl font-bold">
+            🍽️ Add Meal
           </h1>
 
-          <p className="text-gray-500 mt-2">
-            Log a meal and track your daily nutrition.
+          <p className="mt-2 text-blue-100">
+            Track your nutrition and stay on course.
           </p>
         </div>
 
-        <form action={createMeal} className="space-y-5">
-          <div>
-            <label className="block mb-2 text-sm font-medium">
-              Meal Name
-            </label>
+        {/* Form */}
+        <div className="p-8">
+          <form action={createMeal} className="space-y-6">
+            {/* Meal Name */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-700">
+                Meal Name
+              </label>
 
-            <input
-              name="mealName"
-              required
-              placeholder="Chicken Wrap"
-              className="w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-black"
-            />
-          </div>
+              <input
+                name="mealName"
+                required
+                placeholder="Chicken Wrap"
+                className="w-full rounded-xl border border-gray-300 p-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-          <div>
-            <label className="block mb-2 text-sm font-medium">
-              Calories
-            </label>
+            {/* Calories */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-700">
+                Calories
+              </label>
 
-            <input
-              name="calories"
-              type="number"
-              required
-              placeholder="650"
-              className="w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-black"
-            />
-          </div>
+              <input
+                name="calories"
+                type="number"
+                required
+                placeholder="650"
+                className="w-full rounded-xl border border-gray-300 p-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-          <div>
-            <label className="block mb-2 text-sm font-medium">
-              Meal Type
-            </label>
+            {/* Meal Type */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-700">
+                Meal Type
+              </label>
 
-            <select
-              name="mealType"
-              required
-              className="w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-black"
-            >
-              <option value="">
-                Select Meal Type
-              </option>
+              <select
+                name="mealType"
+                required
+                className="w-full rounded-xl border border-gray-300 p-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">
+                  Select Meal Type
+                </option>
 
-              <option value="Breakfast">
-                🍳 Breakfast
-              </option>
+                <option value="Breakfast">
+                  🍳 Breakfast
+                </option>
 
-              <option value="Lunch">
-                🥪 Lunch
-              </option>
+                <option value="Lunch">
+                  🥪 Lunch
+                </option>
 
-              <option value="Dinner">
-                🍝 Dinner
-              </option>
+                <option value="Dinner">
+                  🍝 Dinner
+                </option>
 
-              <option value="Snack">
-                🍎 Snack
-              </option>
-            </select>
-          </div>
+                <option value="Snack">
+                  🍎 Snack
+                </option>
+              </select>
+            </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Link
-              href="/dashboard"
-              className="rounded-lg border px-4 py-2 hover:bg-gray-100"
-            >
-              Back
-            </Link>
+            {/* Future AI Section */}
+            <div className="rounded-2xl border border-dashed border-blue-300 bg-blue-50 p-6">
+              <h3 className="font-semibold text-blue-900">
+                🤖 AI Meal Scanner
+              </h3>
 
-            <button
-              type="submit"
-              className="rounded-lg bg-black text-white px-5 py-2 hover:bg-gray-800"
-            >
-              Save Meal
-            </button>
-          </div>
-        </form>
+              <p className="text-sm text-blue-700 mt-2">
+                Coming soon: Upload a photo and let AI estimate calories
+                automatically.
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-4 pt-4">
+              <Link
+                href="/dashboard"
+                className="rounded-xl border px-6 py-3 font-medium hover:bg-gray-100 transition"
+              >
+                Cancel
+              </Link>
+
+              <button
+                type="submit"
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-medium transition"
+              >
+                Save Meal
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
   );

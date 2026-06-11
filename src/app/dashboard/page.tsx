@@ -22,6 +22,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import CalorieChart from "@/components/calorie-chart";
+
 
 export default async function Dashboard() {
   const { userId } = await auth();
@@ -129,10 +131,52 @@ export default async function Dashboard() {
     progressBarClass = "bg-green-500";
   }
 
+  const sevenDaysAgo = new Date();
+
+  sevenDaysAgo.setDate(
+    sevenDaysAgo.getDate() - 7
+  );
+
+  const mealsLastWeek =
+    await prisma.meal.findMany({
+      where: {
+        userId,
+        createdAt: {
+          gte: sevenDaysAgo,
+        },
+      },
+    });
+
+  const caloriesByDay = new Map<
+    string,
+    number
+  >();
+  for (const meal of mealsLastWeek) {
+    const day =
+      meal.createdAt.toLocaleDateString(
+        "en-AU",
+        {
+          weekday: "short",
+        }
+      );
+
+    caloriesByDay.set(
+      day,
+      (caloriesByDay.get(day) ?? 0)
+      + meal.calories
+    );
+  }
+  const chartData = Array.from(
+    caloriesByDay.entries()
+  ).map(([day, calories]) => ({
+    day,
+    calories,
+  }));
+
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="border-b bg-white shadow-sm sticky top-0 z-50">
+      <div className="border-b bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
 
           {/* Logo */}
@@ -176,9 +220,9 @@ export default async function Dashboard() {
 
       <div className="max-w-7xl mx-auto p-8">
         {/* Daily Goal */}
-        <div className="bg-white border rounded-2xl p-6 mb-8">
-          <h2 className="font-bold text-xl mb-6">
-            Daily Goal Progress
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 mb-8 text-white shadow-lg">
+          <h2 className="font-bold text-2xl mb-6">
+            🎯 Daily Goal Progress
           </h2>
 
           <div className="flex items-center gap-8">
@@ -200,7 +244,7 @@ export default async function Dashboard() {
                   {progressMessage}
                 </span>
 
-                <span className="text-gray-500">
+                <span className="text-blue-100 font-medium">
                   {totalCalories} / {calorieGoal} kcal
                 </span>
               </div>
@@ -214,7 +258,7 @@ export default async function Dashboard() {
                 />
               </div>
 
-              <p className="text-sm text-gray-500 mt-3">
+              <p className="text-sm text-blue-100 mt-3">
                 {caloriePercentage > 100
                   ? `${caloriePercentage}% of goal (over target)`
                   : `${caloriePercentage}% of daily goal reached`}
@@ -226,12 +270,12 @@ export default async function Dashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white border rounded-2xl p-6 mb-8">
+          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
             <h2 className="text-sm text-gray-500">
-              Calories Today
+              🔥 Calories Today
             </h2>
 
-            <p className="text-4xl font-bold mt-2">
+            <p className="text-4xl font-bold mt-2 text-blue-500">
               {totalCalories.toLocaleString()}
             </p>
 
@@ -240,39 +284,132 @@ export default async function Dashboard() {
             </p>
           </div>
 
-          <div className="bg-white border rounded-2xl p-6 mb-8">
+          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
             <h2 className="text-sm text-gray-500">
-              Protein
+              💪 Protein
             </h2>
 
-            <p className="text-4xl font-bold mt-2">
+            <p className="text-4xl font-bold mt-2 text-blue-500">
               {totalProtein}g
             </p>
           </div>
 
-          <div className="bg-white border rounded-2xl p-6 mb-8">
+          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
             <h2 className="text-sm text-gray-500">
-              Carbs
+              🍞 Carbs
             </h2>
 
-            <p className="text-4xl font-bold mt-2">
+            <p className="text-4xl font-bold mt-2 text-blue-500">
               {totalCarbs}g
             </p>
           </div>
 
-          <div className="bg-white border rounded-2xl p-6 mb-8">
+          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
             <h2 className="text-sm text-gray-500">
-              Fat
+              🥑 Fat
             </h2>
 
-            <p className="text-4xl font-bold mt-2">
+            <p className="text-4xl font-bold text-blue-500">
               {totalFat}g
             </p>
           </div>
         </div>
 
+
+        {/* Insights & Trends */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+          {/* Summary Card */}
+          <div className="bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-3xl p-6 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">
+                📈 Today's Summary
+              </h2>
+
+              <span className="text-4xl">
+                🧭
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <p className="text-blue-100 text-sm">
+                  Calories Consumed
+                </p>
+
+                <p className="text-4xl font-bold">
+                  {totalCalories.toLocaleString()}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-blue-100 text-sm">
+                  Meals Logged
+                </p>
+
+                <p className="text-2xl font-semibold">
+                  {meals.length}
+                </p>
+              </div>
+
+              <div className="pt-2 border-t border-white/20">
+                <p className="text-sm text-blue-100">
+                  {caloriePercentage > 100
+                    ? "⚠️ You've exceeded your calorie goal today."
+                    : caloriePercentage >= 75
+                      ? "🔥 You're getting close to your daily goal."
+                      : "🚀 Keep logging meals and stay on track."}
+                </p>
+              </div>
+            </div>
+          </div>
+
+
+
+          {/* Chart Card */}
+          <div className="lg:col-span-2 bg-white border rounded-3xl p-6 shadow-sm">
+
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold">
+                  📊 Last 7 Days
+                </h2>
+
+                <p className="text-sm text-gray-500">
+                  Average:{" "}
+                  <span className="font-semibold text-gray-900">
+                    {Math.round(
+                      chartData.reduce(
+                        (sum, day) => sum + day.calories,
+                        0
+                      ) / Math.max(chartData.length, 1)
+                    )}
+                    {" "}kcal/day
+
+                  </span>
+                </p>
+              </div>
+
+              <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
+                Weekly View
+              </div>
+            </div>
+
+            <CalorieChart data={chartData} />
+          </div>
+        </div>
+
         {/* Recent Meals */}
-        <div className="bg-white border rounded-2xl p-6 mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">
+            Recent Meals
+          </h2>
+
+          <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+            {meals.length} Meals
+          </span>
+        </div>
+        <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
           <h2 className="text-2xl font-bold mb-4">
             Recent Meals
           </h2>
@@ -304,15 +441,15 @@ export default async function Dashboard() {
                   className="flex justify-between items-center border rounded-lg p-4 hover:bg-gray-50"
                 >
                   <div>
-                    <p className="font-medium">
+                    <p className="font-semibold">
                       {meal.mealName}
                     </p>
 
-                    <p className="text-sm text-gray-500">
+                    <span className="inline-block px-2 py-1 rounded-full bg-gray-100 text-xs">
                       {meal.mealType}
-                    </p>
+                    </span>
 
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 mt-1">
                       {meal.calories} kcal
                     </p>
                   </div>
