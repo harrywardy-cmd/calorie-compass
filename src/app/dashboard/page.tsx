@@ -395,7 +395,10 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            <CalorieChart data={chartData} />
+            <CalorieChart
+              data={chartData}
+              calorieGoal={calorieGoal}
+            />
           </div>
         </div>
 
