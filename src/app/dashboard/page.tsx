@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 // Dashboard UI components
-import DashboardToast from "@/components/dashboard-toast";
+import DashboardToast from "@/components/dashboard/dashboard-toast";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ProgressCard from "@/components/dashboard/ProgressCard";
 import StatsCards from "@/components/dashboard/StatsCards";

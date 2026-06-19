@@ -1,3 +1,4 @@
+// Props required for displaying nutrition statistics
 type StatsCardsProps = {
   calories: number;
   protein: number;
@@ -5,6 +6,7 @@ type StatsCardsProps = {
   fat: number;
 };
 
+// Displays key nutrition metrics for the current day
 export default function StatsCards({
   calories,
   protein,
@@ -13,6 +15,8 @@ export default function StatsCards({
 }: StatsCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+
+      {/* Total calories consumed today */}
       <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
         <h2 className="text-sm text-gray-500">
           🔥 Calories Today
@@ -27,6 +31,7 @@ export default function StatsCards({
         </p>
       </div>
 
+      {/* Total protein consumed today */}
       <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
         <h2 className="text-sm text-gray-500">
           💪 Protein
@@ -37,6 +42,7 @@ export default function StatsCards({
         </p>
       </div>
 
+      {/* Total carbohydrates consumed today */}
       <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
         <h2 className="text-sm text-gray-500">
           🍞 Carbs
@@ -47,6 +53,7 @@ export default function StatsCards({
         </p>
       </div>
 
+      {/* Total fat consumed today */}
       <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
         <h2 className="text-sm text-gray-500">
           🥑 Fat

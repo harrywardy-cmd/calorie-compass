@@ -3,13 +3,17 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { updateGoal } from "./actions";
 
+// Settings page for managing user preferences
 export default async function SettingsPage() {
+  // Get the currently authenticated user's Clerk ID
   const { userId } = await auth();
 
+  // Redirect unauthenticated users to the sign-in page
   if (!userId) {
     redirect("/sign-in");
   }
 
+  // Fetch the user's settings and profile data from the database
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
@@ -19,7 +23,8 @@ export default async function SettingsPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-8">
-        {/* Header */}
+
+        {/* Page header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold">
             ⚙️ Settings
@@ -30,7 +35,7 @@ export default async function SettingsPage() {
           </p>
         </div>
 
-        {/* Goal Card */}
+        {/* Card for updating daily calorie goals */}
         <div className="bg-white border rounded-2xl shadow-sm p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-semibold">
@@ -43,7 +48,12 @@ export default async function SettingsPage() {
             </p>
           </div>
 
-          <form action={updateGoal} className="space-y-6">
+          <form
+            // Submits the updated goal to the server action
+            action={updateGoal}
+            className="space-y-6"
+          >
+            {/* Input field for calorie goal */}
             <div>
               <label
                 htmlFor="calorieGoal"
@@ -56,14 +66,18 @@ export default async function SettingsPage() {
                 id="calorieGoal"
                 name="calorieGoal"
                 type="number"
+
+                // Restrict values to a reasonable calorie range
                 min="500"
                 max="10000"
+
+                // Populate input with the user's current goal
                 defaultValue={user?.calorieGoal}
                 className="w-full rounded-xl border p-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            {/* Quick Presets */}
+            {/* Suggested calorie goal presets */}
             <div>
               <p className="text-sm font-medium mb-3">
                 Common Goals
@@ -88,7 +102,10 @@ export default async function SettingsPage() {
               </div>
             </div>
 
+            {/* Form action buttons */}
             <div className="flex justify-end gap-4 pt-4">
+
+              {/* Return to dashboard without saving changes */}
               <a
                 href="/dashboard"
                 className="border rounded-xl px-5 py-3 hover:bg-gray-100"
@@ -96,6 +113,7 @@ export default async function SettingsPage() {
                 Cancel
               </a>
 
+              {/* Save the updated calorie goal */}
               <button
                 type="submit"
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
@@ -106,7 +124,7 @@ export default async function SettingsPage() {
           </form>
         </div>
 
-        {/* Preview Card */}
+        {/* Displays the user's currently active calorie goal */}
         <div className="bg-white border rounded-2xl shadow-sm p-8 mt-6">
           <h2 className="text-xl font-semibold mb-3">
             Current Goal
@@ -114,6 +132,7 @@ export default async function SettingsPage() {
 
           <div className="flex items-center justify-between">
             <div>
+              {/* Display the current calorie goal with formatting */}
               <p className="text-5xl font-bold">
                 {user?.calorieGoal.toLocaleString()}
               </p>
@@ -123,6 +142,7 @@ export default async function SettingsPage() {
               </p>
             </div>
 
+            {/* Visual goal indicator */}
             <div className="text-6xl">
               🎯
             </div>

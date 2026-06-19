@@ -2,19 +2,24 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { updateMeal } from "./actions";
 
+// Edit Meal page component
+// Displays a form allowing users to update an existing meal
 export default async function EditMealPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  // Extract the meal ID from the route parameters
   const { id } = await params;
 
+  // Fetch the meal from the database
   const meal = await prisma.meal.findUnique({
     where: {
       id,
     },
   });
 
+  // Show a friendly error page if the meal doesn't exist
   if (!meal) {
     return (
       <main className="min-h-screen flex items-center justify-center">
@@ -37,7 +42,8 @@ export default async function EditMealPage({
   return (
     <main className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4">
       <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border overflow-hidden">
-        {/* Header */}
+
+        {/* Page header */}
         <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-8 text-white">
           <h1 className="text-4xl font-bold">
             ✏️ Edit Meal
@@ -48,16 +54,17 @@ export default async function EditMealPage({
           </p>
         </div>
 
-        {/* Form */}
+        {/* Edit meal form */}
         <div className="p-8">
           <form
+            // Bind the meal ID so the server action knows which meal to update
             action={updateMeal.bind(
               null,
               meal.id
             )}
             className="space-y-6"
           >
-            {/* Meal Name */}
+            {/* Input for updating the meal name */}
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-700">
                 Meal Name
@@ -71,7 +78,7 @@ export default async function EditMealPage({
               />
             </div>
 
-            {/* Calories */}
+            {/* Input for updating calorie count */}
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-700">
                 Calories
@@ -86,7 +93,7 @@ export default async function EditMealPage({
               />
             </div>
 
-            {/* Meal Type */}
+            {/* Dropdown for selecting meal type */}
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-700">
                 Meal Type
@@ -119,7 +126,7 @@ export default async function EditMealPage({
               </select>
             </div>
 
-            {/* Meal Info */}
+            {/* Displays information about the current meal */}
             <div className="rounded-2xl border border-orange-200 bg-orange-50 p-6">
               <h3 className="font-semibold text-orange-900">
                 📊 Current Meal
@@ -137,8 +144,10 @@ export default async function EditMealPage({
               </p>
             </div>
 
-            {/* Buttons */}
+            {/* Action buttons */}
             <div className="flex justify-end gap-4 pt-4">
+
+              {/* Return to dashboard without saving */}
               <Link
                 href="/dashboard"
                 className="rounded-xl border px-6 py-3 font-medium hover:bg-gray-100 transition"
@@ -146,6 +155,7 @@ export default async function EditMealPage({
                 Cancel
               </Link>
 
+              {/* Submit the form and save changes */}
               <button
                 type="submit"
                 className="rounded-xl bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 font-medium transition"

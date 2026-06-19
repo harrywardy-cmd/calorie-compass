@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { createMeal } from "./actions";
 
-
+// Page for creating a new meal entry
 export default function NewMealPage() {
   return (
     <main className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4">
       <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border overflow-hidden">
-        {/* Header */}
+
+        {/* Page header */}
         <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-8 text-white">
           <h1 className="text-4xl font-bold">
             🍽️ Add Meal
@@ -17,10 +18,14 @@ export default function NewMealPage() {
           </p>
         </div>
 
-        {/* Form */}
+        {/* Meal creation form */}
         <div className="p-8">
-          <form action={createMeal} className="space-y-6">
-            {/* Meal Name */}
+          <form
+            // Submits the form data to the createMeal server action
+            action={createMeal}
+            className="space-y-6"
+          >
+            {/* Input field for the meal name */}
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-700">
                 Meal Name
@@ -34,7 +39,7 @@ export default function NewMealPage() {
               />
             </div>
 
-            {/* Calories */}
+            {/* Input field for calorie count */}
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-700">
                 Calories
@@ -49,7 +54,7 @@ export default function NewMealPage() {
               />
             </div>
 
-            {/* Meal Type */}
+            {/* Dropdown menu for selecting the meal category */}
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-700">
                 Meal Type
@@ -82,7 +87,7 @@ export default function NewMealPage() {
               </select>
             </div>
 
-            {/* Future AI Section */}
+            {/* Placeholder section for future AI-powered meal recognition */}
             <div className="rounded-2xl border border-dashed border-blue-300 bg-blue-50 p-6">
               <h3 className="font-semibold text-blue-900">
                 🤖 AI Meal Scanner
@@ -94,8 +99,10 @@ export default function NewMealPage() {
               </p>
             </div>
 
-            {/* Buttons */}
+            {/* Form action buttons */}
             <div className="flex justify-end gap-4 pt-4">
+
+              {/* Return to dashboard without creating a meal */}
               <Link
                 href="/dashboard"
                 className="rounded-xl border px-6 py-3 font-medium hover:bg-gray-100 transition"
@@ -103,6 +110,7 @@ export default function NewMealPage() {
                 Cancel
               </Link>
 
+              {/* Submit the form and save the meal */}
               <button
                 type="submit"
                 className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-medium transition"
