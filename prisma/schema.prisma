@@ -38,7 +38,7 @@ model Meal {
   carbs     Float    @default(0)
   fat       Float    @default(0)
 
-  imageUrl  String
+  imageUrl String?
 
   /// AI confidence score (0-100)
   confidence Int?    
