@@ -5,7 +5,7 @@ import { Settings, Plus } from "lucide-react";
 // Desktop-only dashboard header
 export default function DashboardHeaderDesktop() {
   return (
-    <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur shadow-sm">
+    <header className="sticky top-0 z-50 border-b bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg">
 
       {/* Centered content container */}
       <div className="max-w-7xl mx-auto px-8 py-4">
@@ -20,7 +20,7 @@ export default function DashboardHeaderDesktop() {
               <span>Calorie Compass</span>
             </h1>
 
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-white/80 mt-1">
               Track calories and nutrition effortlessly
             </p>
           </div>

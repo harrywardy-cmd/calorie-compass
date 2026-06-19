@@ -6,7 +6,7 @@ import LoadingLink from "../ui/LoadingLink";
 // Mobile-only dashboard header
 export default function DashboardHeaderMobile() {
   return (
-    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
+    <header className="sticky top-0 z-50 border-b bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg">
 
       {/* Mobile Container */}
       <div className="px-4 py-4">
@@ -51,7 +51,7 @@ export default function DashboardHeaderMobile() {
         </div>
 
         {/* Subtitle */}
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-white/80 mt-1">
           Track calories and nutrition effortlessly
         </p>
 
