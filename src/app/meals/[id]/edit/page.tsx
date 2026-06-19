@@ -1,6 +1,7 @@
-import Link from "next/link";
+import LoadingLink from "@/components/ui/LoadingLink";
 import { prisma } from "@/lib/prisma";
 import { updateMeal } from "./actions";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 // Edit Meal page component
 // Displays a form allowing users to update an existing meal
@@ -28,12 +29,12 @@ export default async function EditMealPage({
             Meal Not Found
           </h1>
 
-          <Link
+          <LoadingLink
             href="/dashboard"
             className="inline-block mt-4 text-blue-600"
           >
             Return to Dashboard
-          </Link>
+          </LoadingLink>
         </div>
       </main>
     );
@@ -148,20 +149,30 @@ export default async function EditMealPage({
             <div className="flex justify-end gap-4 pt-4">
 
               {/* Return to dashboard without saving */}
-              <Link
+              <LoadingLink
                 href="/dashboard"
                 className="rounded-xl border px-6 py-3 font-medium hover:bg-gray-100 transition"
               >
                 Cancel
-              </Link>
+              </LoadingLink>
 
               {/* Submit the form and save changes */}
-              <button
-                type="submit"
-                className="rounded-xl bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 font-medium transition"
+              <SubmitButton
+                loadingText="Saving Changes..."
+                className="
+    rounded-xl
+    bg-orange-500
+    hover:bg-orange-600
+    text-white
+    px-6
+    py-3
+    font-medium
+    transition
+    min-w-[180px]
+  "
               >
                 Save Changes
-              </button>
+              </SubmitButton>
             </div>
           </form>
         </div>

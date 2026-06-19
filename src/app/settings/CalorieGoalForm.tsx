@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import LoadingLink from "@/components/ui/LoadingLink";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 type CalorieGoalFormProps = {
   defaultGoal: number;
@@ -104,10 +106,9 @@ export default function CalorieGoalForm({
                 text-left
                 transition
 
-                ${
-                  goal === preset.value
-                    ? "border-blue-600 bg-blue-100"
-                    : "bg-white hover:border-blue-500"
+                ${goal === preset.value
+                  ? "border-blue-600 bg-blue-100"
+                  : "bg-white hover:border-blue-500"
                 }
               `}
             >
@@ -124,42 +125,51 @@ export default function CalorieGoalForm({
 
       </div>
 
-      {/* Buttons */}
-      <div className="
-        flex
-        flex-col-reverse
-        sm:flex-row
-        justify-end
-        gap-3
-      ">
-        <a
+      {/* Form Actions */}
+      <div
+        className="
+    flex
+    flex-col-reverse
+    sm:flex-row
+    justify-end
+    gap-3
+  "
+      >
+
+        {/* Return to dashboard */}
+        <LoadingLink
           href="/dashboard"
           className="
-            border
-            rounded-xl
-            px-5
-            py-3
-            text-center
-            hover:bg-gray-100
-          "
+      border
+      rounded-xl
+      px-5
+      py-3
+      text-center
+      hover:bg-gray-100
+      transition
+    "
         >
           Cancel
-        </a>
+        </LoadingLink>
 
-        <button
-          type="submit"
+        {/* Save goal button with loading state */}
+        <SubmitButton
+          loadingText="Saving Goal..."
           className="
-            bg-blue-600
-            hover:bg-blue-700
-            text-white
-            px-6
-            py-3
-            rounded-xl
-            font-medium
-          "
+      bg-blue-600
+      hover:bg-blue-700
+      text-white
+      px-6
+      py-3
+      rounded-xl
+      font-medium
+      transition-colors
+      min-w-[150px]
+    "
         >
           Save Goal
-        </button>
+        </SubmitButton>
+
       </div>
     </form>
   );

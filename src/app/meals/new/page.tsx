@@ -1,5 +1,6 @@
-import Link from "next/link";
+import LoadingLink from "@/components/ui/LoadingLink";
 import { createMeal } from "./actions";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 // Page for creating a new meal entry
 export default function NewMealPage() {
@@ -103,20 +104,30 @@ export default function NewMealPage() {
             <div className="flex justify-end gap-4 pt-4">
 
               {/* Return to dashboard without creating a meal */}
-              <Link
+              <LoadingLink
                 href="/dashboard"
                 className="rounded-xl border px-6 py-3 font-medium hover:bg-gray-100 transition"
               >
                 Cancel
-              </Link>
+              </LoadingLink>
 
               {/* Submit the form and save the meal */}
-              <button
-                type="submit"
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-medium transition"
+              <SubmitButton
+                loadingText="Saving Meal..."
+                className="
+    rounded-xl
+    bg-blue-600
+    hover:bg-blue-700
+    text-white
+    px-6
+    py-3
+    font-medium
+    transition
+    min-w-[170px]
+  "
               >
                 Save Meal
-              </button>
+              </SubmitButton>
             </div>
           </form>
         </div>

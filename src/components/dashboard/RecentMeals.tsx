@@ -1,8 +1,7 @@
-import Link from "next/link";
-
 import MealCard from "./MealCard";
 
 import { Meal } from "@prisma/client";
+import LoadingLink from "../ui/LoadingLink";
 
 // Props required for displaying the user's recent meals
 type RecentMealsProps = {
@@ -57,7 +56,7 @@ export default function RecentMeals({
             </p>
 
             {/* Call To Action */}
-            <Link
+            <LoadingLink
               href="/meals/new"
               className="
                 inline-flex
@@ -75,7 +74,7 @@ export default function RecentMeals({
               "
             >
               ➕ Add First Meal
-            </Link>
+            </LoadingLink>
           </div>
         ) : (
 

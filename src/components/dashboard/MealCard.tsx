@@ -1,7 +1,7 @@
-import Link from "next/link";
+import LoadingLink from "@/components/ui/LoadingLink";
 import { Pencil, Trash2, Flame } from "lucide-react";
 import { Meal } from "@prisma/client";
-
+import SubmitButton from "@/components/ui/SubmitButton";
 import { deleteMeal } from "@/app/dashboard/actions";
 
 import {
@@ -84,7 +84,7 @@ export default function MealCard({
         <div className="flex items-center gap-2">
 
           {/* Edit */}
-          <Link
+          <LoadingLink
             href={`/meals/${meal.id}/edit`}
             className="
               inline-flex
@@ -103,7 +103,7 @@ export default function MealCard({
             <span className="hidden sm:inline">
               Edit
             </span>
-          </Link>
+          </LoadingLink>
 
           {/* Delete */}
           <AlertDialog>
@@ -131,49 +131,83 @@ export default function MealCard({
               </button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent>
+            <AlertDialogContent className="max-w-md">
+
               <AlertDialogHeader>
 
-                <AlertDialogTitle>
+                {/* Dialog Title */}
+                <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+                  <Trash2 size={18} />
                   Delete Meal?
                 </AlertDialogTitle>
 
-                <AlertDialogDescription>
-                  This will permanently delete "{meal.mealName}".
+                {/* Warning Message */}
+                <AlertDialogDescription className="text-left">
+                  This action cannot be undone.
+
+                  <span className="block mt-2 font-medium text-gray-900">
+                    "{meal.mealName}"
+                  </span>
+
+                  will be permanently removed from your meal history.
                 </AlertDialogDescription>
 
               </AlertDialogHeader>
 
-              <AlertDialogFooter>
+              {/* Mobile + Desktop Friendly Actions */}
+              <AlertDialogFooter
+                className="
+      flex-col-reverse
+      sm:flex-row
+      gap-2
+    "
+              >
 
-                <AlertDialogCancel>
+                {/* Cancel Button */}
+                <AlertDialogCancel
+                  className="
+        w-full
+        sm:w-auto
+      "
+                >
                   Cancel
                 </AlertDialogCancel>
 
-                <form action={deleteMeal}>
+                {/* Delete Form */}
+                <form
+                  action={deleteMeal}
+                  className="
+        w-full
+        sm:w-auto
+      "
+                >
                   <input
                     type="hidden"
                     name="mealId"
                     value={meal.id}
                   />
 
-                  <AlertDialogAction asChild>
-                    <button
-                      type="submit"
-                      className="
-                        bg-red-600
-                        text-white
-                        px-4
-                        py-2
-                        rounded
-                      "
-                    >
-                      Delete
-                    </button>
-                  </AlertDialogAction>
+                  <SubmitButton
+                    loadingText="Deleting..."
+                    className="
+          w-full
+          sm:w-auto
+          bg-red-600
+          hover:bg-red-700
+          text-white
+          px-5
+          py-2
+          rounded-md
+          font-medium
+          transition
+        "
+                  >
+                    Delete Meal
+                  </SubmitButton>
                 </form>
 
               </AlertDialogFooter>
+
             </AlertDialogContent>
           </AlertDialog>
 

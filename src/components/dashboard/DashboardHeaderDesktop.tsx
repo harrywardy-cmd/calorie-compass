@@ -1,4 +1,4 @@
-import Link from "next/link";
+import LoadingLink from "@/components/ui/LoadingLink";
 import { UserButton } from "@clerk/nextjs";
 import { Settings, Plus } from "lucide-react";
 
@@ -29,40 +29,40 @@ export default function DashboardHeaderDesktop() {
           <div className="flex items-center gap-3">
 
             {/* Add Meal Button */}
-            <Link
+            <LoadingLink
               href="/meals/new"
               className="
-                flex
-                items-center
-                gap-2
-                bg-black
-                text-white
-                px-5
-                py-2.5
-                rounded-xl
-                hover:bg-gray-800
-                transition
-                font-medium
-                shadow-sm
-              "
+    flex
+    items-center
+    gap-2
+    bg-black
+    text-white
+    px-5
+    py-2.5
+    rounded-xl
+    hover:bg-gray-800
+    transition
+    font-medium
+    shadow-sm
+  "
             >
               <Plus size={18} />
               Add Meal
-            </Link>
+            </LoadingLink>
 
             {/* Settings Button */}
-            <Link
+            <LoadingLink
               href="/settings"
               className="
-                p-2.5
-                rounded-xl
-                border
-                hover:bg-gray-100
-                transition
-              "
+    p-2.5
+    rounded-xl
+    border
+    hover:bg-gray-100
+    transition
+  "
             >
               <Settings size={20} />
-            </Link>
+            </LoadingLink>
 
             {/* User Profile Menu */}
             <UserButton

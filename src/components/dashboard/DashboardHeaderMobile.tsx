@@ -1,6 +1,7 @@
-import Link from "next/link";
+
 import { UserButton } from "@clerk/nextjs";
 import { Settings, Plus } from "lucide-react";
+import LoadingLink from "../ui/LoadingLink";
 
 // Mobile-only dashboard header
 export default function DashboardHeaderMobile() {
@@ -25,7 +26,7 @@ export default function DashboardHeaderMobile() {
           <div className="flex items-center gap-2">
 
             {/* Settings */}
-            <Link
+            <LoadingLink
               href="/settings"
               className="
                 p-2
@@ -36,7 +37,7 @@ export default function DashboardHeaderMobile() {
               "
             >
               <Settings size={18} />
-            </Link>
+            </LoadingLink>
 
             {/* Clerk User Menu */}
             <UserButton
@@ -55,7 +56,7 @@ export default function DashboardHeaderMobile() {
         </p>
 
         {/* Add Meal Button */}
-        <Link
+        <LoadingLink
           href="/meals/new"
           className="
             mt-4
@@ -76,7 +77,7 @@ export default function DashboardHeaderMobile() {
         >
           <Plus size={18} />
           Add Meal
-        </Link>
+        </LoadingLink>
       </div>
     </header>
   );
