@@ -229,13 +229,7 @@ export default async function Dashboard() {
           progressBarClass={progressBarClass}
         />
 
-        {/* Nutrition statistics cards */}
-        <StatsCards
-          calories={totalCalories}
-          protein={totalProtein}
-          carbs={totalCarbs}
-          fat={totalFat}
-        />
+
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Daily insights and summary */}
@@ -256,6 +250,14 @@ export default async function Dashboard() {
 
         {/* Recently logged meals */}
         <RecentMeals meals={meals} />
+        
+        {/* Nutrition statistics cards */}
+        <StatsCards
+          calories={totalCalories}
+          protein={totalProtein}
+          carbs={totalCarbs}
+          fat={totalFat}
+        />
       </div>
     </main>
   );

@@ -14,50 +14,73 @@ export default function RecentMeals({
   meals,
 }: RecentMealsProps) {
   return (
-    <>
-      {/* Section header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">
-          Recent Meals
-        </h2>
+    <section className="mb-8">
 
-        {/* Display total number of meals */}
-        <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-          {meals.length} Meals
-        </span>
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-4">
+
+        <div>
+          <h2 className="text-2xl font-bold">
+            Recent Meals
+          </h2>
+
+          <p className="text-sm text-gray-500">
+            Your latest logged meals
+          </p>
+        </div>
+
+        {/* Meal Counter */}
+        <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+          {meals.length} Meal{meals.length !== 1 ? "s" : ""}
+        </div>
       </div>
 
-      <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
+      {/* Main Container */}
+      <div className="bg-white rounded-3xl border shadow-sm overflow-hidden">
 
-        {/* Show an empty state when no meals have been logged */}
+        {/* Empty State */}
         {meals.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-16 px-6">
 
-            {/* Empty state illustration */}
-            <p className="text-5xl mb-4">
+            {/* Illustration */}
+            <div className="text-6xl mb-4">
               🍎
-            </p>
+            </div>
 
-            <h3 className="font-semibold text-lg">
+            <h3 className="text-xl font-semibold">
               No meals logged yet
             </h3>
 
-            <p className="text-gray-500 mt-2">
-              Add your first meal to start tracking.
+            <p className="text-gray-500 mt-2 max-w-sm mx-auto">
+              Start tracking your nutrition journey by
+              adding your first meal.
             </p>
 
-            {/* Quick action for creating the first meal */}
+            {/* Call To Action */}
             <Link
               href="/meals/new"
-              className="inline-block mt-4 bg-black text-white px-4 py-2 rounded-lg"
+              className="
+                inline-flex
+                items-center
+                gap-2
+                mt-6
+                bg-black
+                text-white
+                px-5
+                py-3
+                rounded-xl
+                font-medium
+                hover:bg-gray-800
+                transition
+              "
             >
-              Add First Meal
+              ➕ Add First Meal
             </Link>
           </div>
         ) : (
 
-          /* Render a MealCard for each logged meal */
-          <div className="space-y-3">
+          /* Meal List */
+          <div className="divide-y">
             {meals.map((meal) => (
               <MealCard
                 key={meal.id}
@@ -67,6 +90,6 @@ export default function RecentMeals({
           </div>
         )}
       </div>
-    </>
+    </section>
   );
 }

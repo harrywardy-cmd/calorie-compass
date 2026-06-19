@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Flame } from "lucide-react";
 import { Meal } from "@/generated/prisma/client";
 
 import { deleteMeal } from "@/app/dashboard/actions";
@@ -26,95 +26,158 @@ export default function MealCard({
   meal,
 }: MealCardProps) {
   return (
-    <div className="flex justify-between items-center border rounded-lg p-4 hover:bg-gray-50">
+    <div
+      className="
+        p-5
+        transition
+        hover:bg-gray-50
+      "
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
-      {/* Meal information */}
-      <div>
-        <p className="font-semibold">
-          {meal.mealName}
-        </p>
+        {/* Meal Information */}
+        <div className="flex-1">
 
-        {/* Meal category badge */}
-        <span className="inline-block px-2 py-1 rounded-full bg-gray-100 text-xs">
-          {meal.mealType}
-        </span>
+          {/* Meal Name */}
+          <h3 className="font-semibold text-lg">
+            {meal.mealName}
+          </h3>
 
-        {/* Calorie information */}
-        <p className="text-sm text-gray-500 mt-1">
-          {meal.calories} kcal
-        </p>
-      </div>
+          {/* Meal Type + Calories */}
+          <div className="flex flex-wrap items-center gap-3 mt-2">
 
-      {/* Meal action buttons */}
-      <div className="flex items-center gap-4">
+            {/* Meal Type Badge */}
+            <span className="
+              inline-flex
+              items-center
+              rounded-full
+              bg-blue-50
+              text-blue-700
+              px-3
+              py-1
+              text-xs
+              font-medium
+            ">
+              {meal.mealType}
+            </span>
 
-        {/* Navigate to the edit meal page */}
-        <Link href={`/meals/${meal.id}/edit`}>
-          <Pencil
-            size={18}
-            className="text-blue-600 hover:text-blue-800"
-          />
-        </Link>
+            {/* Calories */}
+            <span className="
+              inline-flex
+              items-center
+              gap-1
+              text-gray-600
+              text-sm
+            ">
+              <Flame size={14} />
+              {meal.calories} kcal
+            </span>
+          </div>
 
-        {/* Confirmation dialog before permanently deleting a meal */}
-        <AlertDialog>
+          {/* Created Date */}
+          <p className="text-xs text-gray-400 mt-3">
+            Logged {new Date(meal.createdAt).toLocaleDateString()}
+          </p>
+        </div>
 
-          {/* Opens the delete confirmation dialog */}
-          <AlertDialogTrigger asChild>
-            <button
-              type="button"
-              className="text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={18} />
-            </button>
-          </AlertDialogTrigger>
+        {/* Actions */}
+        <div className="flex items-center gap-2">
 
-          <AlertDialogContent>
-            <AlertDialogHeader>
+          {/* Edit */}
+          <Link
+            href={`/meals/${meal.id}/edit`}
+            className="
+              inline-flex
+              items-center
+              gap-2
+              px-3
+              py-2
+              rounded-lg
+              border
+              text-blue-600
+              hover:bg-blue-50
+              transition
+            "
+          >
+            <Pencil size={16} />
+            <span className="hidden sm:inline">
+              Edit
+            </span>
+          </Link>
 
-              {/* Dialog title */}
-              <AlertDialogTitle>
-                Delete Meal?
-              </AlertDialogTitle>
+          {/* Delete */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                type="button"
+                className="
+                  inline-flex
+                  items-center
+                  gap-2
+                  px-3
+                  py-2
+                  rounded-lg
+                  border
+                  text-red-600
+                  hover:bg-red-50
+                  transition
+                "
+              >
+                <Trash2 size={16} />
 
-              {/* Warn the user before deleting */}
-              <AlertDialogDescription>
-                This will permanently delete "{meal.mealName}".
-              </AlertDialogDescription>
+                <span className="hidden sm:inline">
+                  Delete
+                </span>
+              </button>
+            </AlertDialogTrigger>
 
-            </AlertDialogHeader>
+            <AlertDialogContent>
+              <AlertDialogHeader>
 
-            <AlertDialogFooter>
+                <AlertDialogTitle>
+                  Delete Meal?
+                </AlertDialogTitle>
 
-              {/* Close the dialog without deleting */}
-              <AlertDialogCancel>
-                Cancel
-              </AlertDialogCancel>
+                <AlertDialogDescription>
+                  This will permanently delete "{meal.mealName}".
+                </AlertDialogDescription>
 
-              {/* Submit deletion request to the server action */}
-              <form action={deleteMeal}>
+              </AlertDialogHeader>
 
-                {/* Hidden field used to identify which meal to delete */}
-                <input
-                  type="hidden"
-                  name="mealId"
-                  value={meal.id}
-                />
+              <AlertDialogFooter>
 
-                {/* Confirm meal deletion */}
-                <AlertDialogAction asChild>
-                  <button
-                    type="submit"
-                    className="bg-red-600 text-white px-4 py-2 rounded"
-                  >
-                    Delete
-                  </button>
-                </AlertDialogAction>
+                <AlertDialogCancel>
+                  Cancel
+                </AlertDialogCancel>
 
-              </form>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                <form action={deleteMeal}>
+                  <input
+                    type="hidden"
+                    name="mealId"
+                    value={meal.id}
+                  />
+
+                  <AlertDialogAction asChild>
+                    <button
+                      type="submit"
+                      className="
+                        bg-red-600
+                        text-white
+                        px-4
+                        py-2
+                        rounded
+                      "
+                    >
+                      Delete
+                    </button>
+                  </AlertDialogAction>
+                </form>
+
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+        </div>
       </div>
     </div>
   );
