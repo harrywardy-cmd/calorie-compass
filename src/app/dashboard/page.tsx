@@ -26,6 +26,8 @@ import {
 import CalorieChart from "@/components/calorie-chart";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ProgressCard from "@/components/dashboard/ProgressCard";
+import StatsCards from "@/components/dashboard/StatsCards";
+import InsightsCard from "@/components/dashboard/InsightsCard";
 
 
 export default async function Dashboard() {
@@ -196,255 +198,171 @@ export default async function Dashboard() {
 
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
-            <h2 className="text-sm text-gray-500">
-              🔥 Calories Today
-            </h2>
-
-            <p className="text-4xl font-bold mt-2 text-blue-500">
-              {totalCalories.toLocaleString()}
-            </p>
-
-            <p className="text-sm text-gray-500 mt-1">
-              kcal
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
-            <h2 className="text-sm text-gray-500">
-              💪 Protein
-            </h2>
-
-            <p className="text-4xl font-bold mt-2 text-blue-500">
-              {totalProtein}g
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
-            <h2 className="text-sm text-gray-500">
-              🍞 Carbs
-            </h2>
-
-            <p className="text-4xl font-bold mt-2 text-blue-500">
-              {totalCarbs}g
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
-            <h2 className="text-sm text-gray-500">
-              🥑 Fat
-            </h2>
-
-            <p className="text-4xl font-bold text-blue-500">
-              {totalFat}g
-            </p>
-          </div>
-        </div>
-
+        <StatsCards
+          calories={totalCalories}
+          protein={totalProtein}
+          carbs={totalCarbs}
+          fat={totalFat}
+        />
 
         {/* Insights & Trends */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <InsightsCard
+          totalCalories={totalCalories}
+          mealsCount={meals.length}
+          caloriePercentage={caloriePercentage}
+        />
 
-          {/* Summary Card */}
-          <div className="bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-3xl p-6 shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">
-                📈 Today's Summary
+        {/* Chart Card */}
+        <div className="lg:col-span-2 bg-white border rounded-3xl p-6 shadow-sm">
+
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold">
+                📊 Last 7 Days
               </h2>
 
-              <span className="text-4xl">
-                🧭
-              </span>
-            </div>
+              <p className="text-sm text-gray-500">
+                Average:{" "}
+                <span className="font-semibold text-gray-900">
+                  {Math.round(
+                    chartData.reduce(
+                      (sum, day) => sum + day.calories,
+                      0
+                    ) / Math.max(chartData.length, 1)
+                  )}
+                  {" "}kcal/day
 
-            <div className="space-y-4">
-              <div>
-                <p className="text-blue-100 text-sm">
-                  Calories Consumed
-                </p>
-
-                <p className="text-4xl font-bold">
-                  {totalCalories.toLocaleString()}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-blue-100 text-sm">
-                  Meals Logged
-                </p>
-
-                <p className="text-2xl font-semibold">
-                  {meals.length}
-                </p>
-              </div>
-
-              <div className="pt-2 border-t border-white/20">
-                <p className="text-sm text-blue-100">
-                  {caloriePercentage > 100
-                    ? "⚠️ You've exceeded your calorie goal today."
-                    : caloriePercentage >= 75
-                      ? "🔥 You're getting close to your daily goal."
-                      : "🚀 Keep logging meals and stay on track."}
-                </p>
-              </div>
-            </div>
-          </div>
-
-
-
-          {/* Chart Card */}
-          <div className="lg:col-span-2 bg-white border rounded-3xl p-6 shadow-sm">
-
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold">
-                  📊 Last 7 Days
-                </h2>
-
-                <p className="text-sm text-gray-500">
-                  Average:{" "}
-                  <span className="font-semibold text-gray-900">
-                    {Math.round(
-                      chartData.reduce(
-                        (sum, day) => sum + day.calories,
-                        0
-                      ) / Math.max(chartData.length, 1)
-                    )}
-                    {" "}kcal/day
-
-                  </span>
-                </p>
-              </div>
-
-              <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
-                Weekly View
-              </div>
-            </div>
-
-            <CalorieChart
-              data={chartData}
-              calorieGoal={calorieGoal}
-            />
-          </div>
-        </div>
-
-        {/* Recent Meals */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">
-            Recent Meals
-          </h2>
-
-          <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-            {meals.length} Meals
-          </span>
-        </div>
-        <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
-          <h2 className="text-2xl font-bold mb-4">
-            Recent Meals
-          </h2>
-
-          {meals.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-5xl mb-4">🍎</p>
-
-              <h3 className="font-semibold text-lg">
-                No meals logged yet
-              </h3>
-
-              <p className="text-gray-500 mt-2">
-                Add your first meal to start tracking.
+                </span>
               </p>
-
-              <Link
-                href="/meals/new"
-                className="inline-block mt-4 bg-black text-white px-4 py-2 rounded-lg"
-              >
-                Add First Meal
-              </Link>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {meals.map((meal) => (
-                <div
-                  key={meal.id}
-                  className="flex justify-between items-center border rounded-lg p-4 hover:bg-gray-50"
-                >
-                  <div>
-                    <p className="font-semibold">
-                      {meal.mealName}
-                    </p>
 
-                    <span className="inline-block px-2 py-1 rounded-full bg-gray-100 text-xs">
-                      {meal.mealType}
-                    </span>
-
-                    <p className="text-sm text-gray-500 mt-1">
-                      {meal.calories} kcal
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <Link href={`/meals/${meal.id}/edit`}>
-                      <Pencil
-                        size={18}
-                        className="text-blue-600 hover:text-blue-800"
-                      />
-                    </Link>
-
-
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <button
-                          type="button"
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </AlertDialogTrigger>
-
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Delete Meal?
-                          </AlertDialogTitle>
-
-                          <AlertDialogDescription>
-                            This will permanently delete "{meal.mealName}".
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>
-                            Cancel
-                          </AlertDialogCancel>
-
-                          <form action={deleteMeal}>
-                            <input
-                              type="hidden"
-                              name="mealId"
-                              value={meal.id}
-                            />
-
-                            <AlertDialogAction asChild>
-                              <button
-                                type="submit"
-                                className="bg-red-600 text-white px-4 py-2 rounded"
-                              >
-                                Delete
-                              </button>
-                            </AlertDialogAction>
-                          </form>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </div>
-              ))}
+            <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
+              Weekly View
             </div>
-          )}
+          </div>
+
+          <CalorieChart
+            data={chartData}
+            calorieGoal={calorieGoal}
+          />
         </div>
+      </div>
+
+      {/* Recent Meals */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">
+          Recent Meals
+        </h2>
+
+        <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+          {meals.length} Meals
+        </span>
+      </div>
+      <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
+        <h2 className="text-2xl font-bold mb-4">
+          Recent Meals
+        </h2>
+
+        {meals.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-5xl mb-4">🍎</p>
+
+            <h3 className="font-semibold text-lg">
+              No meals logged yet
+            </h3>
+
+            <p className="text-gray-500 mt-2">
+              Add your first meal to start tracking.
+            </p>
+
+            <Link
+              href="/meals/new"
+              className="inline-block mt-4 bg-black text-white px-4 py-2 rounded-lg"
+            >
+              Add First Meal
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {meals.map((meal) => (
+              <div
+                key={meal.id}
+                className="flex justify-between items-center border rounded-lg p-4 hover:bg-gray-50"
+              >
+                <div>
+                  <p className="font-semibold">
+                    {meal.mealName}
+                  </p>
+
+                  <span className="inline-block px-2 py-1 rounded-full bg-gray-100 text-xs">
+                    {meal.mealType}
+                  </span>
+
+                  <p className="text-sm text-gray-500 mt-1">
+                    {meal.calories} kcal
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <Link href={`/meals/${meal.id}/edit`}>
+                    <Pencil
+                      size={18}
+                      className="text-blue-600 hover:text-blue-800"
+                    />
+                  </Link>
+
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button
+                        type="button"
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Delete Meal?
+                        </AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          This will permanently delete "{meal.mealName}".
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>
+                          Cancel
+                        </AlertDialogCancel>
+
+                        <form action={deleteMeal}>
+                          <input
+                            type="hidden"
+                            name="mealId"
+                            value={meal.id}
+                          />
+
+                          <AlertDialogAction asChild>
+                            <button
+                              type="submit"
+                              className="bg-red-600 text-white px-4 py-2 rounded"
+                            >
+                              Delete
+                            </button>
+                          </AlertDialogAction>
+                        </form>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
-}
+} 
