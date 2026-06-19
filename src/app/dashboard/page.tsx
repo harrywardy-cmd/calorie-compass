@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+// Dashboard UI components
 import DashboardToast from "@/components/dashboard-toast";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ProgressCard from "@/components/dashboard/ProgressCard";
@@ -11,18 +12,22 @@ import RecentMeals from "@/components/dashboard/RecentMeals";
 import WeeklyChartCard from "@/components/dashboard/WeeklyChartCard";
 
 export default async function Dashboard() {
+  // Get the currently authenticated Clerk user
   const { userId } = await auth();
 
+  // Redirect unauthenticated users to the sign-in page
   if (!userId) {
     redirect("/sign-in");
   }
 
+  // Try to find the user in our database
   let user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
   });
 
+  // Create a new database user if this is their first login
   if (!user) {
     user = await prisma.user.create({
       data: {
@@ -31,19 +36,23 @@ export default async function Dashboard() {
     });
   }
 
+  // Create date boundaries for today's meals
   const today = new Date();
 
+  // Set time to midnight (start of today)
   today.setHours(0, 0, 0, 0);
 
+  // Create tomorrow's date to use as the upper limit
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
+  // Fetch all meals logged today
   const meals = await prisma.meal.findMany({
     where: {
       userId,
       createdAt: {
-        gte: today,
-        lt: tomorrow,
+        gte: today, // Greater than or equal to start of today
+        lt: tomorrow, // Less than start of tomorrow
       },
     },
     orderBy: {
@@ -51,34 +60,42 @@ export default async function Dashboard() {
     },
   });
 
+  // Calculate total calories consumed today
   const totalCalories = meals.reduce(
     (sum, meal) => sum + meal.calories,
     0
   );
 
+  // Calculate total protein consumed today
   const totalProtein = meals.reduce(
     (sum, meal) => sum + meal.protein,
     0
   );
 
+  // Calculate total carbs consumed today
   const totalCarbs = meals.reduce(
     (sum, meal) => sum + meal.carbs,
     0
   );
 
+  // Calculate total fat consumed today
   const totalFat = meals.reduce(
     (sum, meal) => sum + meal.fat,
     0
   );
 
+  // Get the user's daily calorie goal
   const calorieGoal = user.calorieGoal;
 
+  // Calculate progress toward calorie goal as a percentage
   const caloriePercentage = Math.round(
     (totalCalories / calorieGoal) * 100
   );
 
+  // Default progress image (seed stage)
   let progressImage = "/progress/seed.png";
 
+  // Select the appropriate growth stage image
   if (caloriePercentage >= 120) {
     progressImage = "/progress/dead.png";
   } else if (caloriePercentage >= 100) {
@@ -91,8 +108,10 @@ export default async function Dashboard() {
     progressImage = "/progress/sprout.png";
   }
 
+  // Default motivational message
   let progressMessage = "Let's get started!";
 
+  // Update message based on calorie goal progress
   if (caloriePercentage >= 120) {
     progressMessage =
       "You've gone well over your goal today.";
@@ -113,8 +132,10 @@ export default async function Dashboard() {
       "Building momentum!";
   }
 
+  // Default progress bar colour
   let progressBarClass = "bg-blue-500";
 
+  // Change colour depending on progress
   if (caloriePercentage >= 120) {
     progressBarClass = "bg-red-600";
   } else if (caloriePercentage > 100) {
@@ -123,71 +144,82 @@ export default async function Dashboard() {
     progressBarClass = "bg-green-500";
   }
 
+  // Calculate the date 7 days ago
   const sevenDaysAgo = new Date();
 
-sevenDaysAgo.setDate(
-  sevenDaysAgo.getDate() - 6
-);
-
-const mealsLastWeek =
-  await prisma.meal.findMany({
-    where: {
-      userId,
-      createdAt: {
-        gte: sevenDaysAgo,
-      },
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-
-const chartData: {
-  day: string;
-  calories: number;
-}[] = [];
-
-for (let i = 6; i >= 0; i--) {
-  const date = new Date();
-
-  date.setDate(
-    date.getDate() - i
+  sevenDaysAgo.setDate(
+    sevenDaysAgo.getDate() - 6
   );
 
-  const dayLabel =
-    date.toLocaleDateString(
-      "en-AU",
-      {
-        weekday: "short",
-      }
+  // Fetch meals from the last 7 days
+  const mealsLastWeek =
+    await prisma.meal.findMany({
+      where: {
+        userId,
+        createdAt: {
+          gte: sevenDaysAgo,
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+  // Data structure used by the weekly calories chart
+  const chartData: {
+    day: string;
+    calories: number;
+  }[] = [];
+
+  // Build chart data for each of the last 7 days
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+
+    // Move backwards through each day
+    date.setDate(
+      date.getDate() - i
     );
 
-  const dayCalories =
-    mealsLastWeek
-      .filter(
-        (meal) =>
-          meal.createdAt.toDateString() ===
-          date.toDateString()
-      )
-      .reduce(
-        (sum, meal) =>
-          sum + meal.calories,
-        0
+    // Create short day labels (Mon, Tue, Wed, etc.)
+    const dayLabel =
+      date.toLocaleDateString(
+        "en-AU",
+        {
+          weekday: "short",
+        }
       );
 
-  chartData.push({
-    day: dayLabel,
-    calories: dayCalories,
-  });
-}
+    // Calculate total calories for this day
+    const dayCalories =
+      mealsLastWeek
+        .filter(
+          (meal) =>
+            meal.createdAt.toDateString() ===
+            date.toDateString()
+        )
+        .reduce(
+          (sum, meal) =>
+            sum + meal.calories,
+          0
+        );
+
+    // Add the day's data to the chart
+    chartData.push({
+      day: dayLabel,
+      calories: dayCalories,
+    });
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
+      {/* Toast notifications */}
       <DashboardToast />
 
+      {/* Dashboard navigation/header */}
       <DashboardHeader />
 
       <div className="max-w-7xl mx-auto p-8">
+        {/* Calorie goal progress section */}
         <ProgressCard
           totalCalories={totalCalories}
           calorieGoal={calorieGoal}
@@ -197,6 +229,7 @@ for (let i = 6; i >= 0; i--) {
           progressBarClass={progressBarClass}
         />
 
+        {/* Nutrition statistics cards */}
         <StatsCards
           calories={totalCalories}
           protein={totalProtein}
@@ -205,12 +238,14 @@ for (let i = 6; i >= 0; i--) {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Daily insights and summary */}
           <InsightsCard
             totalCalories={totalCalories}
             mealsCount={meals.length}
             caloriePercentage={caloriePercentage}
           />
 
+          {/* Weekly calorie tracking chart */}
           <div className="lg:col-span-2">
             <WeeklyChartCard
               chartData={chartData}
@@ -219,6 +254,7 @@ for (let i = 6; i >= 0; i--) {
           </div>
         </div>
 
+        {/* Recently logged meals */}
         <RecentMeals meals={meals} />
       </div>
     </main>
