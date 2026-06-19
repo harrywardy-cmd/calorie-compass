@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Pencil, Trash2, Flame } from "lucide-react";
-import { Meal } from "@/generated/prisma/client";
+import { Meal } from "@prisma/client";
 
 import { deleteMeal } from "@/app/dashboard/actions";
 

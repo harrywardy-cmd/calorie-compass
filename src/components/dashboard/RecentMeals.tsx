@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import MealCard from "./MealCard";
 
-import { Meal } from "@/generated/prisma/client";
+import { Meal } from "@prisma/client";
 
 // Props required for displaying the user's recent meals
 type RecentMealsProps = {
