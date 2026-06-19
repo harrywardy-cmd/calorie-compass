@@ -3,17 +3,20 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-export async function deleteMeal(formData: FormData) {
+export async function deleteMeal(
+  formData: FormData
+) {
   const { userId } = await auth();
 
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
-  const mealId = formData.get("mealId") as string;
-
-  console.log("Deleting meal:", mealId);
+  const mealId = formData.get(
+    "mealId"
+  ) as string;
 
   const meal = await prisma.meal.findUnique({
     where: {
@@ -36,4 +39,6 @@ export async function deleteMeal(formData: FormData) {
   });
 
   revalidatePath("/dashboard");
+
+  redirect("/dashboard");
 }

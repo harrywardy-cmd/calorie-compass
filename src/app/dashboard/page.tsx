@@ -1,34 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
-import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
-import { deleteMeal } from "./actions";
-import { Trash2 } from "lucide-react";
-import { Pencil } from "lucide-react";
-import Image from "next/image";
-import { Settings } from "lucide-react";
+
 import DashboardToast from "@/components/dashboard-toast";
-
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-import CalorieChart from "@/components/calorie-chart";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ProgressCard from "@/components/dashboard/ProgressCard";
 import StatsCards from "@/components/dashboard/StatsCards";
 import InsightsCard from "@/components/dashboard/InsightsCard";
-
+import RecentMeals from "@/components/dashboard/RecentMeals";
+import WeeklyChartCard from "@/components/dashboard/WeeklyChartCard";
 
 export default async function Dashboard() {
   const { userId } = await auth();
@@ -98,6 +78,7 @@ export default async function Dashboard() {
   );
 
   let progressImage = "/progress/seed.png";
+
   if (caloriePercentage >= 120) {
     progressImage = "/progress/dead.png";
   } else if (caloriePercentage >= 100) {
@@ -113,17 +94,23 @@ export default async function Dashboard() {
   let progressMessage = "Let's get started!";
 
   if (caloriePercentage >= 120) {
-    progressMessage = "You've gone well over your goal today.";
+    progressMessage =
+      "You've gone well over your goal today.";
   } else if (caloriePercentage > 100) {
-    progressMessage = "You've exceeded your goal.";
+    progressMessage =
+      "You've exceeded your goal.";
   } else if (caloriePercentage === 100) {
-    progressMessage = "Goal achieved!";
+    progressMessage =
+      "Goal achieved!";
   } else if (caloriePercentage >= 75) {
-    progressMessage = "Almost there!";
+    progressMessage =
+      "Almost there!";
   } else if (caloriePercentage >= 50) {
-    progressMessage = "Great progress!";
+    progressMessage =
+      "Great progress!";
   } else if (caloriePercentage >= 25) {
-    progressMessage = "Building momentum!";
+    progressMessage =
+      "Building momentum!";
   }
 
   let progressBarClass = "bg-blue-500";
@@ -138,55 +125,69 @@ export default async function Dashboard() {
 
   const sevenDaysAgo = new Date();
 
-  sevenDaysAgo.setDate(
-    sevenDaysAgo.getDate() - 7
+sevenDaysAgo.setDate(
+  sevenDaysAgo.getDate() - 6
+);
+
+const mealsLastWeek =
+  await prisma.meal.findMany({
+    where: {
+      userId,
+      createdAt: {
+        gte: sevenDaysAgo,
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+const chartData: {
+  day: string;
+  calories: number;
+}[] = [];
+
+for (let i = 6; i >= 0; i--) {
+  const date = new Date();
+
+  date.setDate(
+    date.getDate() - i
   );
 
-  const mealsLastWeek =
-    await prisma.meal.findMany({
-      where: {
-        userId,
-        createdAt: {
-          gte: sevenDaysAgo,
-        },
-      },
-    });
+  const dayLabel =
+    date.toLocaleDateString(
+      "en-AU",
+      {
+        weekday: "short",
+      }
+    );
 
-  const caloriesByDay = new Map<
-    string,
-    number
-  >();
-  for (const meal of mealsLastWeek) {
-    const day =
-      meal.createdAt.toLocaleDateString(
-        "en-AU",
-        {
-          weekday: "short",
-        }
+  const dayCalories =
+    mealsLastWeek
+      .filter(
+        (meal) =>
+          meal.createdAt.toDateString() ===
+          date.toDateString()
+      )
+      .reduce(
+        (sum, meal) =>
+          sum + meal.calories,
+        0
       );
 
-    caloriesByDay.set(
-      day,
-      (caloriesByDay.get(day) ?? 0)
-      + meal.calories
-    );
-  }
-  const chartData = Array.from(
-    caloriesByDay.entries()
-  ).map(([day, calories]) => ({
-    day,
-    calories,
-  }));
+  chartData.push({
+    day: dayLabel,
+    calories: dayCalories,
+  });
+}
 
   return (
-
     <main className="min-h-screen bg-gray-50">
       <DashboardToast />
-      {/* Header */}
+
       <DashboardHeader />
 
       <div className="max-w-7xl mx-auto p-8">
-        {/* Daily Goal */}
         <ProgressCard
           totalCalories={totalCalories}
           calorieGoal={calorieGoal}
@@ -196,8 +197,6 @@ export default async function Dashboard() {
           progressBarClass={progressBarClass}
         />
 
-
-        {/* Stats Cards */}
         <StatsCards
           calories={totalCalories}
           protein={totalProtein}
@@ -205,164 +204,23 @@ export default async function Dashboard() {
           fat={totalFat}
         />
 
-        {/* Insights & Trends */}
-        <InsightsCard
-          totalCalories={totalCalories}
-          mealsCount={meals.length}
-          caloriePercentage={caloriePercentage}
-        />
-
-        {/* Chart Card */}
-        <div className="lg:col-span-2 bg-white border rounded-3xl p-6 shadow-sm">
-
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold">
-                📊 Last 7 Days
-              </h2>
-
-              <p className="text-sm text-gray-500">
-                Average:{" "}
-                <span className="font-semibold text-gray-900">
-                  {Math.round(
-                    chartData.reduce(
-                      (sum, day) => sum + day.calories,
-                      0
-                    ) / Math.max(chartData.length, 1)
-                  )}
-                  {" "}kcal/day
-
-                </span>
-              </p>
-            </div>
-
-            <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
-              Weekly View
-            </div>
-          </div>
-
-          <CalorieChart
-            data={chartData}
-            calorieGoal={calorieGoal}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <InsightsCard
+            totalCalories={totalCalories}
+            mealsCount={meals.length}
+            caloriePercentage={caloriePercentage}
           />
+
+          <div className="lg:col-span-2">
+            <WeeklyChartCard
+              chartData={chartData}
+              calorieGoal={calorieGoal}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Recent Meals */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">
-          Recent Meals
-        </h2>
-
-        <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-          {meals.length} Meals
-        </span>
-      </div>
-      <div className="bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition">
-        <h2 className="text-2xl font-bold mb-4">
-          Recent Meals
-        </h2>
-
-        {meals.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-5xl mb-4">🍎</p>
-
-            <h3 className="font-semibold text-lg">
-              No meals logged yet
-            </h3>
-
-            <p className="text-gray-500 mt-2">
-              Add your first meal to start tracking.
-            </p>
-
-            <Link
-              href="/meals/new"
-              className="inline-block mt-4 bg-black text-white px-4 py-2 rounded-lg"
-            >
-              Add First Meal
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {meals.map((meal) => (
-              <div
-                key={meal.id}
-                className="flex justify-between items-center border rounded-lg p-4 hover:bg-gray-50"
-              >
-                <div>
-                  <p className="font-semibold">
-                    {meal.mealName}
-                  </p>
-
-                  <span className="inline-block px-2 py-1 rounded-full bg-gray-100 text-xs">
-                    {meal.mealType}
-                  </span>
-
-                  <p className="text-sm text-gray-500 mt-1">
-                    {meal.calories} kcal
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <Link href={`/meals/${meal.id}/edit`}>
-                    <Pencil
-                      size={18}
-                      className="text-blue-600 hover:text-blue-800"
-                    />
-                  </Link>
-
-
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <button
-                        type="button"
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </AlertDialogTrigger>
-
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Delete Meal?
-                        </AlertDialogTitle>
-
-                        <AlertDialogDescription>
-                          This will permanently delete "{meal.mealName}".
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>
-                          Cancel
-                        </AlertDialogCancel>
-
-                        <form action={deleteMeal}>
-                          <input
-                            type="hidden"
-                            name="mealId"
-                            value={meal.id}
-                          />
-
-                          <AlertDialogAction asChild>
-                            <button
-                              type="submit"
-                              className="bg-red-600 text-white px-4 py-2 rounded"
-                            >
-                              Delete
-                            </button>
-                          </AlertDialogAction>
-                        </form>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <RecentMeals meals={meals} />
       </div>
     </main>
   );
-} 
+}
