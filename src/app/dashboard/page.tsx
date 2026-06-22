@@ -36,29 +36,35 @@ export default async function Dashboard() {
     });
   }
 
-  // Create date boundaries for today's meals
-  const today = new Date();
+  // Melbourne-based current date/time
+  const melbourneNow = new Date(
+    new Date().toLocaleString("en-US", {
+      timeZone: "Australia/Melbourne",
+    })
+  );
 
-  // Set time to midnight (start of today)
+  // Start of today in Melbourne
+  const today = new Date(melbourneNow);
   today.setHours(0, 0, 0, 0);
 
-  // Create tomorrow's date to use as the upper limit
+  // Start of tomorrow in Melbourne
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  // Fetch all meals logged today
+  // Fetch today's meals
   const meals = await prisma.meal.findMany({
     where: {
       userId,
       createdAt: {
-        gte: today, // Greater than or equal to start of today
-        lt: tomorrow, // Less than start of tomorrow
+        gte: today,
+        lt: tomorrow,
       },
     },
     orderBy: {
       createdAt: "desc",
     },
   });
+
 
   // Calculate total calories consumed today
   const totalCalories = meals.reduce(
@@ -144,9 +150,8 @@ export default async function Dashboard() {
     progressBarClass = "bg-green-500";
   }
 
-  // Calculate the date 7 days ago
-  const sevenDaysAgo = new Date();
-
+  // Start of the 7-day chart window
+  const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(
     sevenDaysAgo.getDate() - 6
   );
@@ -171,14 +176,20 @@ export default async function Dashboard() {
     calories: number;
   }[] = [];
 
+
   // Build chart data for each of the last 7 days
   for (let i = 6; i >= 0; i--) {
-    const date = new Date();
+    const date = new Date(today);
 
-    // Move backwards through each day
     date.setDate(
       date.getDate() - i
     );
+
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
 
     // Create short day labels (Mon, Tue, Wed, etc.)
     const dayLabel =
@@ -194,8 +205,8 @@ export default async function Dashboard() {
       mealsLastWeek
         .filter(
           (meal) =>
-            meal.createdAt.toDateString() ===
-            date.toDateString()
+            meal.createdAt >= dayStart &&
+            meal.createdAt < dayEnd
         )
         .reduce(
           (sum, meal) =>
@@ -250,7 +261,7 @@ export default async function Dashboard() {
 
         {/* Recently logged meals */}
         <RecentMeals meals={meals} />
-        
+
         {/* Nutrition statistics cards */}
         <StatsCards
           calories={totalCalories}
