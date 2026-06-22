@@ -17,38 +17,58 @@ export async function createMeal(formData: FormData) {
   // Extract form values submitted by the user
   const mealName = formData.get("mealName") as string;
 
-  // Convert calories from a string to a number
   const calories = Number(
     formData.get("calories")
   );
 
-  // Get the selected meal type (Breakfast, Lunch, Dinner, Snack)
   const mealType = formData.get("mealType") as string;
+
+  // Nutrition values
+  const protein = Number(
+    formData.get("protein") ?? 0
+  );
+
+  const carbs = Number(
+    formData.get("carbs") ?? 0
+  );
+
+  const fat = Number(
+    formData.get("fat") ?? 0
+  );
+
+  // AI values (optional)
+  const confidenceValue =
+    formData.get("confidence");
+
+  const confidence = confidenceValue
+    ? Number(confidenceValue)
+    : null;
+
+  const aiGenerated =
+    formData.get("aiGenerated") ===
+    "true";
 
   // Create a new meal record in the database
   await prisma.meal.create({
     data: {
-      // Associate the meal with the current user
       userId,
 
-      // Meal details entered by the user
       mealName,
       mealType,
       calories,
 
-      // Default nutrition values
-      // These can be updated later if nutrition tracking is added
-      protein: 0,
-      carbs: 0,
-      fat: 0,
+      protein,
+      carbs,
+      fat,
 
-      // Placeholder image URL
-      imageUrl: "",
+      confidence,
+      aiGenerated,
+
+      imageUrl: null,
     },
   });
 
-  // Redirect back to the dashboard with success parameters
-  // These parameters can be used to display a toast notification
+  // Redirect back to dashboard
   redirect(
     `/dashboard?success=meal-added&meal=${encodeURIComponent(
       mealName

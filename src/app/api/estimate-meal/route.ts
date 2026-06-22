@@ -63,8 +63,23 @@ No code fences.
         return NextResponse.json(
             nutrition
         );
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
+
+        const status =
+            error?.status ?? 500;
+
+        if (status === 429) {
+            return NextResponse.json(
+                {
+                    error:
+                        "AI requests are temporarily unavailable. Please wait a minute and try again.",
+                },
+                {
+                    status: 429,
+                }
+            );
+        }
 
         return NextResponse.json(
             {
@@ -75,5 +90,6 @@ No code fences.
                 status: 500,
             }
         );
+
     }
 }
