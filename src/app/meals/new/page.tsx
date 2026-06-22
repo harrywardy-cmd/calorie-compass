@@ -3,8 +3,31 @@ import NewMealForm from "@/components/meals/NewMealForm";
 // Page for creating a new meal entry
 export default function NewMealPage() {
   return (
-    <main className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4">
-      <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border overflow-hidden">
+    <main
+      className="
+    fixed
+    inset-0
+    z-50
+    overflow-y-auto
+    bg-black/50
+    backdrop-blur-md
+    p-4
+  "
+    >
+      <div
+        className="
+    mx-auto
+    my-8
+    w-full
+    max-w-2xl
+    max-h-[90vh]
+    overflow-y-auto
+    rounded-3xl
+    bg-white
+    shadow-2xl
+    border
+  "
+      >
 
         {/* Page header */}
         <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-8 text-white">
