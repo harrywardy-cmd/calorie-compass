@@ -33,7 +33,7 @@ export default function MealCard({
         hover:bg-gray-50
       "
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
         {/* Meal Information */}
         <div className="flex-1">
@@ -42,23 +42,6 @@ export default function MealCard({
           <h3 className="font-semibold text-lg">
             {meal.mealName}
           </h3>
-          {meal.aiGenerated && (
-            <span
-              className="
-      inline-flex
-      items-center
-      rounded-full
-      bg-blue-50
-      text-blue-700
-      px-2
-      py-1
-      text-xs
-      font-medium
-    "
-            >
-              🤖 AI Generated
-            </span>
-          )}
 
           {/* Meal Type + Calories */}
           <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -91,11 +74,18 @@ export default function MealCard({
             </span>
           </div>
 
+
           {/* Created Date */}
           <p className="text-xs text-gray-400 mt-3">
             Logged {new Date(meal.createdAt).toLocaleDateString()}
           </p>
         </div>
+        {/* AI Badge */}
+        {meal.aiGenerated && (
+          <p className="mt-2 text-xs text-gray-500">
+            AI Generated • {meal.confidence}% confidence
+          </p>
+        )}
 
         {/* Actions */}
         <div className="flex items-center gap-2">
