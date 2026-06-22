@@ -23,7 +23,17 @@ export default async function EditMealPage({
   // Show a friendly error page if the meal doesn't exist
   if (!meal) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
+      <main
+        className="
+        fixed
+        inset-0
+        z-50
+        overflow-y-auto
+        bg-black/50
+        backdrop-blur-md
+        p-4
+      "
+      >
         <div className="bg-white border rounded-2xl p-8 shadow">
           <h1 className="text-2xl font-bold">
             Meal Not Found
@@ -41,139 +51,412 @@ export default async function EditMealPage({
   }
 
   return (
-    <main className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4">
-      <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border overflow-hidden">
-
-        {/* Page header */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-8 text-white">
+    <main
+      className="
+    fixed
+    inset-0
+    z-50
+    overflow-y-auto
+    bg-black/50
+    backdrop-blur-md
+    p-4
+  "
+    >
+      <div
+        className="
+      mx-auto
+      my-8
+      w-full
+      max-w-2xl
+      max-h-[90vh]
+      overflow-y-auto
+      rounded-3xl
+      bg-white
+      shadow-2xl
+      border
+    "
+      >
+        {/* ======================================================
+       Header
+    ====================================================== */}
+        <div
+          className="
+        bg-gradient-to-r
+        from-blue-600
+        to-cyan-500
+        p-8
+        text-white
+      "
+        >
           <h1 className="text-4xl font-bold">
             ✏️ Edit Meal
           </h1>
 
-          <p className="mt-2 text-orange-100">
-            Update your meal information and nutrition details.
+          <p className="mt-2 text-blue-100">
+            Update your nutrition information and keep your progress accurate.
           </p>
         </div>
 
-        {/* Edit meal form */}
-        <div className="p-8">
+        {/* ======================================================
+       Form
+    ====================================================== */}
+        <div className="p-6 md:p-8">
           <form
-            // Bind the meal ID so the server action knows which meal to update
             action={updateMeal.bind(
               null,
               meal.id
             )}
             className="space-y-6"
           >
-            {/* Input for updating the meal name */}
-            <div>
-              <label className="block mb-2 text-sm font-semibold text-gray-700">
-                Meal Name
-              </label>
+            {/* ==================================================
+           Meal Details Card
+        ================================================== */}
+            <div className="rounded-3xl border bg-white p-6 shadow-sm">
 
-              <input
-                name="mealName"
-                defaultValue={meal.mealName}
-                required
-                className="w-full rounded-xl border border-gray-300 p-4 text-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
+              <h2 className="text-xl font-bold mb-5">
+                🍽️ Meal Details
+              </h2>
+
+              <div className="space-y-5">
+
+                {/* Meal Name */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-600">
+                    Meal Name
+                  </label>
+
+                  <input
+                    name="mealName"
+                    defaultValue={meal.mealName}
+                    required
+                    className="
+                  w-full
+                  rounded-2xl
+                  border
+                  border-gray-200
+                  bg-gray-50
+                  p-4
+                  text-lg
+                  font-medium
+                  transition
+                  focus:border-blue-500
+                  focus:bg-white
+                  focus:outline-none
+                "
+                  />
+                </div>
+
+                {/* Meal Type */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-600">
+                    Meal Type
+                  </label>
+
+                  <select
+                    name="mealType"
+                    defaultValue={meal.mealType ?? ""}
+                    className="
+                  w-full
+                  rounded-2xl
+                  border
+                  border-gray-200
+                  bg-gray-50
+                  p-4
+                  text-lg
+                  transition
+                  focus:border-blue-500
+                  focus:bg-white
+                  focus:outline-none
+                "
+                  >
+                    <option value="">
+                      Select Meal Type
+                    </option>
+
+                    <option value="Breakfast">
+                      🍳 Breakfast
+                    </option>
+
+                    <option value="Lunch">
+                      🥪 Lunch
+                    </option>
+
+                    <option value="Dinner">
+                      🍝 Dinner
+                    </option>
+
+                    <option value="Snack">
+                      🍎 Snack
+                    </option>
+                  </select>
+                </div>
+
+              </div>
             </div>
 
-            {/* Input for updating calorie count */}
-            <div>
-              <label className="block mb-2 text-sm font-semibold text-gray-700">
+            {/* ==================================================
+           Calories Hero Card
+        ================================================== */}
+            <div
+              className="
+            rounded-3xl
+            bg-gradient-to-r
+            from-blue-600
+            to-cyan-500
+            p-6
+            text-white
+            shadow-lg
+          "
+            >
+              <p className="text-blue-100 text-sm">
                 Calories
-              </label>
+              </p>
 
               <input
                 name="calories"
                 type="number"
                 defaultValue={meal.calories}
                 required
-                className="w-full rounded-xl border border-gray-300 p-4 text-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="
+              mt-2
+              w-full
+              border-none
+              bg-transparent
+              text-5xl
+              font-bold
+              placeholder:text-blue-100
+              focus:outline-none
+            "
               />
+
+              <p className="text-blue-100">
+                kcal
+              </p>
             </div>
 
-            {/* Dropdown for selecting meal type */}
+            {/* ==================================================
+           Nutrition Breakdown
+        ================================================== */}
             <div>
-              <label className="block mb-2 text-sm font-semibold text-gray-700">
-                Meal Type
-              </label>
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold">
+                  📊 Nutrition Breakdown
+                </h2>
 
-              <select
-                name="mealType"
-                defaultValue={meal.mealType ?? ""}
-                className="w-full rounded-xl border border-gray-300 p-4 text-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                <p className="text-gray-500">
+                  Macronutrients for this meal.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+
+                {/* Protein */}
+                <div className="rounded-3xl border p-5 shadow-sm">
+                  <label className="block text-sm text-gray-500 mb-2">
+                    Protein
+                  </label>
+
+                  <input
+                    name="protein"
+                    type="number"
+                    defaultValue={meal.protein}
+                    className="
+                  w-full
+                  bg-transparent
+                  text-2xl
+                  font-bold
+                  focus:outline-none
+                "
+                  />
+
+                  <p className="text-sm text-gray-400">
+                    grams
+                  </p>
+                </div>
+
+                {/* Carbs */}
+                <div className="rounded-3xl border p-5 shadow-sm">
+                  <label className="block text-sm text-gray-500 mb-2">
+                    Carbs
+                  </label>
+
+                  <input
+                    name="carbs"
+                    type="number"
+                    defaultValue={meal.carbs}
+                    className="
+                  w-full
+                  bg-transparent
+                  text-2xl
+                  font-bold
+                  focus:outline-none
+                "
+                  />
+
+                  <p className="text-sm text-gray-400">
+                    grams
+                  </p>
+                </div>
+
+                {/* Fat */}
+                <div className="rounded-3xl border p-5 shadow-sm">
+                  <label className="block text-sm text-gray-500 mb-2">
+                    Fat
+                  </label>
+
+                  <input
+                    name="fat"
+                    type="number"
+                    defaultValue={meal.fat}
+                    className="
+                  w-full
+                  bg-transparent
+                  text-2xl
+                  font-bold
+                  focus:outline-none
+                "
+                  />
+
+                  <p className="text-sm text-gray-400">
+                    grams
+                  </p>
+                </div>
+
+              </div>
+            </div>
+            {/* ==================================================
+   AI Information
+================================================== */}
+            {meal.aiGenerated && (
+              <div
+                className="
+      rounded-3xl
+      border
+      border-blue-200
+      bg-blue-50
+      p-5
+      shadow-sm
+    "
               >
-                <option value="">
-                  Select Meal Type
-                </option>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
-                <option value="Breakfast">
-                  🍳 Breakfast
-                </option>
+                  <div>
+                    <h3 className="font-semibold text-blue-900">
+                      🤖 AI Generated Meal
+                    </h3>
 
-                <option value="Lunch">
-                  🥪 Lunch
-                </option>
+                    <p className="text-sm text-blue-700">
+                      Nutrition values were estimated using AI.
+                    </p>
+                  </div>
 
-                <option value="Dinner">
-                  🍝 Dinner
-                </option>
+                  <div
+                    className="
+          rounded-full
+          bg-blue-100
+          px-3
+          py-1
+          text-sm
+          font-semibold
+          text-blue-700
+        "
+                  >
+                    {meal.confidence ?? 0}% confidence
+                  </div>
 
-                <option value="Snack">
-                  🍎 Snack
-                </option>
-              </select>
+                </div>
+              </div>
+            )}
+            {/* ==================================================
+           Meal Information Card
+        ================================================== */}
+            <div className="rounded-3xl border bg-white p-6 shadow-sm">
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                <div>
+                  <h3 className="font-bold text-lg">
+                    📅 Meal Information
+                  </h3>
+
+                  <p className="text-gray-500 mt-1">
+                    Logged on{" "}
+                    {new Date(
+                      meal.createdAt
+                    ).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <div className="text-4xl">
+                  🍽️
+                </div>
+
+              </div>
+
             </div>
 
-            {/* Displays information about the current meal */}
-            <div className="rounded-2xl border border-orange-200 bg-orange-50 p-6">
-              <h3 className="font-semibold text-orange-900">
-                📊 Current Meal
-              </h3>
+            <input
+              type="hidden"
+              name="confidence"
+              value={meal.confidence ?? 0}
+            />
 
-              <p className="text-sm text-orange-700 mt-2">
-                Created:{" "}
-                {new Date(
-                  meal.createdAt
-                ).toLocaleDateString()}
-              </p>
+            <input
+              type="hidden"
+              name="aiGenerated"
+              value={meal.aiGenerated.toString()}
+            />
 
-              <p className="text-sm text-orange-700">
-                Current Calories: {meal.calories}
-              </p>
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex justify-end gap-4 pt-4">
-
-              {/* Return to dashboard without saving */}
+            {/* ==================================================
+           Footer Actions
+        ================================================== */}
+            <div
+              className="
+            border-t
+            pt-6
+            flex
+            flex-col-reverse
+            sm:flex-row
+            gap-3
+          "
+            >
+              {/* Cancel */}
               <LoadingLink
                 href="/dashboard"
-                className="rounded-xl border px-6 py-3 font-medium hover:bg-gray-100 transition"
+                className="
+              flex-1
+              rounded-2xl
+              border
+              px-6
+              py-3
+              text-center
+              font-medium
+              hover:bg-gray-100
+              transition
+            "
               >
                 Cancel
               </LoadingLink>
 
-              {/* Submit the form and save changes */}
+              {/* Save */}
               <SubmitButton
                 loadingText="Saving Changes..."
                 className="
-    rounded-xl
-    bg-orange-500
-    hover:bg-orange-600
-    text-white
-    px-6
-    py-3
-    font-medium
-    transition
-    min-w-[180px]
-  "
+              flex-1
+              rounded-2xl
+              bg-blue-600
+              hover:bg-blue-700
+              text-white
+              px-6
+              py-3
+              font-medium
+              transition
+            "
               >
                 Save Changes
               </SubmitButton>
             </div>
+
           </form>
         </div>
       </div>

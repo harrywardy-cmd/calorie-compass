@@ -4,33 +4,90 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-// Updates an existing meal with new information
+// Updates an existing meal
 export async function updateMeal(
   mealId: string,
   formData: FormData
 ) {
-  // Extract the updated meal name from the form
-  const mealName = formData.get("mealName") as string;
+  // =====================================================
+  // Basic meal information
+  // =====================================================
 
-  // Convert the calories value from a string to a number
+  const mealName =
+    formData.get("mealName") as string;
+
+  const mealType =
+    formData.get("mealType") as string;
+
   const calories = Number(
     formData.get("calories")
   );
 
-  // Update the meal record in the database
+  // =====================================================
+  // Nutrition values
+  // =====================================================
+
+  const protein = Number(
+    formData.get("protein")
+  );
+
+  const carbs = Number(
+    formData.get("carbs")
+  );
+
+  const fat = Number(
+    formData.get("fat")
+  );
+
+  // =====================================================
+  // AI metadata
+  // =====================================================
+
+  const confidence = Number(
+    formData.get("confidence")
+  );
+
+  const aiGenerated =
+    formData.get("aiGenerated") ===
+    "true";
+
+  // =====================================================
+  // Update meal
+  // =====================================================
+
   await prisma.meal.update({
     where: {
       id: mealId,
     },
     data: {
       mealName,
+      mealType,
       calories,
+      protein,
+      carbs,
+      fat,
+      confidence,
+      aiGenerated,
     },
   });
 
-  // Refresh the dashboard cache so the latest data is displayed
-  revalidatePath("/dashboard");
+  // =====================================================
+  // Refresh pages
+  // =====================================================
 
-  // Redirect the user back to the dashboard after updating
-  redirect("/dashboard");
+  revalidatePath("/dashboard");
+  revalidatePath("/meals");
+  revalidatePath(
+    `/meals/${mealId}/edit`
+  );
+
+  // =====================================================
+  // Return user to dashboard
+  // =====================================================
+
+  redirect(
+    `/dashboard?success=meal-updated&meal=${encodeURIComponent(
+      mealName
+    )}`
+  );
 }

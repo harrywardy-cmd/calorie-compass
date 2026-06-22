@@ -42,6 +42,23 @@ export default function MealCard({
           <h3 className="font-semibold text-lg">
             {meal.mealName}
           </h3>
+          {meal.aiGenerated && (
+            <span
+              className="
+      inline-flex
+      items-center
+      rounded-full
+      bg-blue-50
+      text-blue-700
+      px-2
+      py-1
+      text-xs
+      font-medium
+    "
+            >
+              🤖 AI Generated
+            </span>
+          )}
 
           {/* Meal Type + Calories */}
           <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -162,6 +179,7 @@ export default function MealCard({
       gap-2
     "
               >
+
 
                 {/* Cancel Button */}
                 <AlertDialogCancel
