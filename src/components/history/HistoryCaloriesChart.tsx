@@ -1,5 +1,17 @@
+"use client";
 import { Meal } from "@prisma/client";
 import { formatMealTime } from "@/utils/date";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Cell,
+  LabelList,
+} from "recharts";
 
 type HistoryCaloriesChartProps = {
   meals: Meal[];
@@ -11,11 +23,28 @@ export default function HistoryCaloriesChart({
   calorieGoal,
 }: HistoryCaloriesChartProps) {
 
-  const chartData = meals.map((meal) => ({
-    name: meal.mealName,
-    calories: meal.calories,
-    time: formatMealTime(meal.createdAt),
-  }));
+  const mealTypes = [
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snack",
+  ];
+
+  const chartData = mealTypes
+    .map((mealType) => {
+      const mealsForType = meals.filter(
+        (meal) => meal.mealType === mealType
+      );
+
+      return {
+        mealType,
+        calories: mealsForType.reduce(
+          (sum, meal) => sum + meal.calories,
+          0
+        ),
+      };
+    })
+    .filter((item) => item.calories > 0);
 
   const totalCalories = meals.reduce(
     (sum, meal) => sum + meal.calories,
@@ -26,6 +55,25 @@ export default function HistoryCaloriesChart({
     (totalCalories / calorieGoal) * 100,
     100
   );
+
+  function getMealColor(mealType: string | null) {
+    switch (mealType) {
+      case "Breakfast":
+        return "#0EA5E9"; // Sky Blue
+
+      case "Lunch":
+        return "#2563EB"; // Primary Blue
+
+      case "Dinner":
+        return "#1D4ED8"; // Deep Blue
+
+      case "Snack":
+        return "#06B6D4"; // Cyan
+
+      default:
+        return "#94A3B8"; // Slate Gray
+    }
+  }
 
   return (
     <section
@@ -64,21 +112,41 @@ export default function HistoryCaloriesChart({
       </div>
 
       {/* Chart */}
-      <div
-        className="
-    mb-8
-    flex
-    h-80
-    items-center
-    justify-center
-    rounded-2xl
-    border-2
-    border-dashed
-    border-gray-200
-  "
-      >
-        Chart goes here
+      <div className="mb-8 h-80">
+
+        <ResponsiveContainer width="100%" height="100%">
+
+          <BarChart data={chartData}>
+
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+            />
+
+            <XAxis dataKey="mealType" />
+
+            <YAxis />
+
+            <Tooltip />
+
+            <Bar
+              dataKey="calories"
+              radius={[10, 10, 0, 0]}
+            >
+              {chartData.map((entry, index) => (
+                <Cell
+                  key={index}
+                  fill={getMealColor(entry.mealType)}
+                />
+              ))}
+            </Bar>
+
+          </BarChart>
+
+        </ResponsiveContainer>
+
       </div>
+
       {/* Footer */}
       <div className="rounded-2xl bg-gray-50 p-6">
 
