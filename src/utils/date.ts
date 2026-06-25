@@ -105,4 +105,12 @@ export function formatMealDate(date: Date) {
 
   // Older dates
   return `${dateString} • ${timeString}`;
+
+}
+
+export function formatMealTime(date: Date) {
+  return new Intl.DateTimeFormat("en-AU", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
 }

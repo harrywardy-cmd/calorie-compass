@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import HistoryList from "@/components/history/HistoryList";
-import MealCaloriesChart from "@/components/history/MealCaloriesChart";
+import HistoryCaloriesChart from "@/components/history/HistoryCaloriesChart";
 import HistoryHero from "@/components/history/HistoryHero";
 
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
@@ -50,16 +50,22 @@ export default async function MealHistoryPage({
       selectedDate
   );
 
+  const user = await prisma.user.findUnique({
+  where: {
+    id: userId,
+  },
+});
+
   return (
     <main className="min-h-screen bg-gray-50">
-  <DashboardHeader />
+      <DashboardHeader />
 
-  <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+      <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
 
-    {/* Back Button */}
-    <Link
-      href={ROUTES.dashboard}
-      className="
+        {/* Back Button */}
+        <Link
+          href={ROUTES.dashboard}
+          className="
         mb-6
         inline-flex
         items-center
@@ -73,30 +79,31 @@ export default async function MealHistoryPage({
         hover:bg-white
         hover:text-black
       "
-    >
-      <ArrowLeft size={18} />
-      Back to Dashboard
-    </Link>
+        >
+          <ArrowLeft size={18} />
+          Back to Dashboard
+        </Link>
 
-    {/* Daily Summary */}
-    <HistoryHero meals={mealsForDay} />
+        {/* Daily Summary */}
+        <HistoryHero meals={mealsForDay} />
 
-    {/* Date Navigation */}
-    <HistoryDateNavigator
-      selectedDate={selectedDate}
-    />
+        {/* Date Navigation */}
+        <HistoryDateNavigator
+          selectedDate={selectedDate}
+        />
 
-    {/* Meals */}
-    <HistoryList meals={mealsForDay} />
+        {/* Meals */}
+        <HistoryList meals={mealsForDay} />
 
-    {/* Daily Calories Chart */}
-    <div className="mt-8">
-      <MealCaloriesChart
-        meals={mealsForDay}
-      />
-    </div>
+        {/* Daily Calories Chart */}
+        <div className="mt-8">
+          <HistoryCaloriesChart
+            meals={mealsForDay}
+            calorieGoal={user?.calorieGoal ?? 2200}
+          />
+        </div>
 
-  </div>
-</main>
+      </div>
+    </main>
   );
 }
