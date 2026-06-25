@@ -6,22 +6,22 @@ type HistoryToolbarProps = {
   search: string;
   onSearchChange: (value: string) => void;
 
-  mealType: string;
-  onMealTypeChange: (value: string) => void;
-
   totalMeals: number;
   filteredMeals: number;
+
+  onExpandAll: () => void;
+  onCollapseAll: () => void;
 };
 
 export default function HistoryToolbar({
   search,
   onSearchChange,
 
-  mealType,
-  onMealTypeChange,
-
   totalMeals,
   filteredMeals,
+
+  onExpandAll,
+  onCollapseAll,
 }: HistoryToolbarProps) {
   return (
     <div className="mb-6 rounded-3xl border bg-white p-6 shadow-sm">
@@ -40,21 +40,21 @@ export default function HistoryToolbar({
 
         <div className="flex flex-col gap-3 md:flex-row">
 
-  {/* Search */}
-  <div className="relative w-full md:w-80">
+          {/* Search */}
+          <div className="relative w-full md:w-80">
 
-    <Search
-      size={18}
-      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-    />
+            <Search
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+            />
 
-    <input
-      value={search}
-      onChange={(e) =>
-        onSearchChange(e.target.value)
-      }
-      placeholder="Search meals..."
-      className="
+            <input
+              value={search}
+              onChange={(e) =>
+                onSearchChange(e.target.value)
+              }
+              placeholder="Search meals..."
+              className="
         w-full
         rounded-2xl
         border
@@ -68,51 +68,52 @@ export default function HistoryToolbar({
         focus:bg-white
         focus:outline-none
       "
-    />
+            />
 
-  </div>
+          </div>
+          <div className="flex gap-3">
 
-  {/* Meal Type Filter */}
-  <select
-    value={mealType}
-    onChange={(e) =>
-      onMealTypeChange(e.target.value)
-    }
-    className="
+            <button
+              onClick={onExpandAll}
+              className="
       rounded-2xl
       border
       border-gray-200
       bg-gray-50
-      px-4
+      px-5
       py-3
+      text-sm
+      font-medium
       transition
-      focus:border-blue-500
-      focus:bg-white
-      focus:outline-none
+      hover:bg-white
+      hover:border-blue-500
     "
-  >
-    <option value="All">
-      🍽 All Meals
-    </option>
+            >
+              Expand All
+            </button>
 
-    <option value="Breakfast">
-      🍳 Breakfast
-    </option>
+            <button
+              onClick={onCollapseAll}
+              className="
+      rounded-2xl
+      border
+      border-gray-200
+      bg-gray-50
+      px-5
+      py-3
+      text-sm
+      font-medium
+      transition
+      hover:bg-white
+      hover:border-blue-500
+    "
+            >
+              Collapse All
+            </button>
 
-    <option value="Lunch">
-      🥪 Lunch
-    </option>
+          </div>
 
-    <option value="Dinner">
-      🍝 Dinner
-    </option>
-
-    <option value="Snack">
-      🍎 Snack
-    </option>
-  </select>
-
-</div>
+        </div>
       </div>
 
     </div>

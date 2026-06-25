@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { Meal } from "@prisma/client";
+import {
+    Accordion,
+} from "@/components/ui/accordion";
 
-import MealCard from "@/components/dashboard/MealCard";
 import HistoryToolbar from "./HistoryToolbar";
 import { ROUTES } from "@/lib/routes";
 import MealGroup from "./MealGroup";
@@ -16,26 +18,13 @@ export default function HistoryList({
     meals,
 }: HistoryListProps) {
     const [search, setSearch] = useState("");
-    const [mealType, setMealType] = useState("All");
     const filteredMeals = useMemo(() => {
         const query = search.trim().toLowerCase();
 
-        return meals.filter((meal) => {
-            const matchesSearch =
-                meal.mealName
-                    .toLowerCase()
-                    .includes(query);
-
-            const matchesMealType =
-                mealType === "All" ||
-                meal.mealType === mealType;
-
-            return (
-                matchesSearch &&
-                matchesMealType
-            );
-        });
-    }, [meals, search, mealType]);
+        return meals.filter((meal) =>
+            meal.mealName.toLowerCase().includes(query)
+        );
+    }, [meals, search]);
 
     const breakfastMeals = filteredMeals.filter(
         (meal) => meal.mealType === "Breakfast"
@@ -52,20 +41,55 @@ export default function HistoryList({
     const snackMeals = filteredMeals.filter(
         (meal) => meal.mealType === "Snack"
     );
+    const [expandedSections, setExpandedSections] =
+        useState<string[]>([]);
+    const ALL_SECTIONS = [
+        "Breakfast",
+        "Lunch",
+        "Dinner",
+        "Snack",
+    ];
 
+    const expandAll = () => {
+        setExpandedSections(ALL_SECTIONS);
+    };
+
+    const collapseAll = () => {
+        setExpandedSections([]);
+    };
+
+    const mealGroups = [
+        {
+            title: "Breakfast",
+            emoji: "🍳",
+            meals: breakfastMeals,
+        },
+        {
+            title: "Lunch",
+            emoji: "🥪",
+            meals: lunchMeals,
+        },
+        {
+            title: "Dinner",
+            emoji: "🍝",
+            meals: dinnerMeals,
+        },
+        {
+            title: "Snack",
+            emoji: "🍎",
+            meals: snackMeals,
+        },
+    ];
     return (
         <>
             <HistoryToolbar
                 search={search}
                 onSearchChange={setSearch}
-
-                mealType={mealType}
-                onMealTypeChange={setMealType}
-
                 totalMeals={meals.length}
                 filteredMeals={filteredMeals.length}
+                onExpandAll={expandAll}
+                onCollapseAll={collapseAll}
             />
-
             <div className="rounded-3xl border bg-white shadow-sm overflow-hidden">
 
                 {filteredMeals.length === 0 ? (
@@ -83,35 +107,20 @@ export default function HistoryList({
                         </p>
                     </div>
                 ) : (
-                    <>
-                        <MealGroup
-                            title="Breakfast"
-                            emoji="🍳"
-                            meals={breakfastMeals}
-                            redirectTo={ROUTES.history}
-                        />
-
-                        <MealGroup
-                            title="Lunch"
-                            emoji="🥪"
-                            meals={lunchMeals}
-                            redirectTo={ROUTES.history}
-                        />
-
-                        <MealGroup
-                            title="Dinner"
-                            emoji="🍝"
-                            meals={dinnerMeals}
-                            redirectTo={ROUTES.history}
-                        />
-
-                        <MealGroup
-                            title="Snack"
-                            emoji="🍎"
-                            meals={snackMeals}
-                            redirectTo={ROUTES.history}
-                        />
-                    </>
+                    <Accordion
+                        type="multiple"
+                        value={expandedSections}
+                        onValueChange={setExpandedSections}
+                        className="space-y-4"
+                    >
+                        {mealGroups.map((group) => (
+                            <MealGroup
+                                key={group.title}
+                                {...group}
+                                redirectTo={ROUTES.history}
+                            />
+                        ))}
+                    </Accordion>
                 )}
 
             </div>
