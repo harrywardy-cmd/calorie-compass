@@ -52,29 +52,111 @@ export default async function MealHistoryPage({
     <main className="min-h-screen bg-gray-50">
       <DashboardHeader />
 
-      <div className="max-w-7xl mx-auto p-8">
+      <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
 
-        {/* Page Header */}
-        <div className="mb-8">
+        {/* Back Button */}
+        <Link
+          href={ROUTES.dashboard}
+          className="
+      mb-6
+      inline-flex
+      items-center
+      gap-2
+      rounded-xl
+      px-3
+      py-2
+      text-sm
+      text-gray-600
+      transition
+      hover:bg-white
+      hover:text-black
+    "
+        >
+          <ArrowLeft size={18} />
+          Back to Dashboard
+        </Link>
 
-          <Link
-            href={ROUTES.dashboard}
-            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black mb-4 transition-colors"
-          >
-            <ArrowLeft size={18} />
-            Back to Dashboard
-          </Link>
+        {/* Hero Section */}
+        <section
+          className="
+      mb-6
+      overflow-hidden
+      rounded-3xl
+      bg-gradient-to-r
+      from-blue-600
+      to-cyan-500
+      p-8
+      text-white
+      shadow-lg
+    "
+        >
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
-          <h1 className="text-4xl font-bold">
-            📖 Nutrition Journal
-          </h1>
-          <HistoryDateNavigator
-            selectedDate={selectedDate}
-          />
+            {/* Left */}
+            <div>
 
-        </div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-sm font-medium">
+                📖 Nutrition Journal
+              </div>
 
-        {/* History Card */}
+              <h1 className="mt-4 text-4xl font-bold">
+                Meal History
+              </h1>
+
+              <p className="mt-3 max-w-2xl text-white/80">
+                Browse your nutrition history one day at a time,
+                revisit previous meals and monitor your eating
+                habits over time.
+              </p>
+
+            </div>
+
+            {/* Right Stats */}
+            <div className="grid grid-cols-2 gap-4">
+
+              <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
+                <p className="text-sm text-white/70">
+                  Meals
+                </p>
+
+                <p className="mt-1 text-3xl font-bold">
+                  {mealsForDay.length}
+                </p>
+
+                <p className="text-xs text-white/70">
+                  Logged today
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
+                <p className="text-sm text-white/70">
+                  AI Meals
+                </p>
+
+                <p className="mt-1 text-3xl font-bold">
+                  {
+                    mealsForDay.filter(
+                      meal => meal.aiGenerated
+                    ).length
+                  }
+                </p>
+
+                <p className="text-xs text-white/70">
+                  AI estimated
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        {/* Date Navigation */}
+        <HistoryDateNavigator
+          selectedDate={selectedDate}
+        />
+
+        {/* Meals */}
         <HistoryList meals={mealsForDay} />
 
       </div>

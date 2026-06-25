@@ -22,6 +22,24 @@ export function getLocalDateKey(
   }).format(date);
 }
 
+// Creates a local date from a YYYY-MM-DD string
+export function parseLocalDate(
+  dateString: string
+) {
+  const [year, month, day] = dateString
+    .split("-")
+    .map(Number);
+
+  return new Date(year, month - 1, day);
+}
+
+// Formats a local date back into YYYY-MM-DD
+export function formatLocalDate(
+  date: Date
+) {
+  return getLocalDateKey(date);
+}
+
 /**
  * Returns the last N local calendar days.
  *
