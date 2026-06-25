@@ -1,11 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import MealCard from "@/components/dashboard/MealCard";
 import { ROUTES } from "@/lib/routes";
+
+
 
 export default async function MealHistoryPage() {
   // Get authenticated user
@@ -33,6 +36,14 @@ export default async function MealHistoryPage() {
 
         {/* Page Header */}
         <div className="mb-8">
+
+          <Link
+            href={ROUTES.dashboard}
+            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black mb-4 transition-colors"
+          >
+            <ArrowLeft size={18} />
+            Back to Dashboard
+          </Link>
 
           <h1 className="text-4xl font-bold">
             🍽 Meal History
