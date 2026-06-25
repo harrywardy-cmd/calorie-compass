@@ -84,6 +84,7 @@ export default function RecentMeals({
               <MealCard
                 key={meal.id}
                 meal={meal}
+                redirectTo="/dashboard"
               />
             ))}
           </div>

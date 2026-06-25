@@ -20,11 +20,13 @@ import {
 // Props required for displaying an individual meal
 type MealCardProps = {
   meal: Meal;
+  redirectTo?: string;
 };
 
 // Displays a single meal with edit and delete actions
 export default function MealCard({
   meal,
+  redirectTo = "/dashboard",
 }: MealCardProps) {
   return (
     <div
@@ -164,32 +166,15 @@ export default function MealCard({
               </AlertDialogHeader>
 
               {/* Mobile + Desktop Friendly Actions */}
-              <AlertDialogFooter
-                className="
-      flex-col-reverse
-      sm:flex-row
-      gap-2
-    "
-              >
+              <AlertDialogFooter className="gap-2 sm:gap-3">
 
-
-                {/* Cancel Button */}
-                <AlertDialogCancel
-                  className="
-        w-full
-        sm:w-auto
-      "
-                >
+                <AlertDialogCancel className="flex-1">
                   Cancel
                 </AlertDialogCancel>
 
-                {/* Delete Form */}
                 <form
                   action={deleteMeal}
-                  className="
-        w-full
-        sm:w-auto
-      "
+                  className="flex-1"
                 >
                   <input
                     type="hidden"
@@ -197,23 +182,29 @@ export default function MealCard({
                     value={meal.id}
                   />
 
-                  <SubmitButton
-                    loadingText="Deleting..."
-                    className="
-          w-full
-          sm:w-auto
-          bg-red-600
-          hover:bg-red-700
-          text-white
-          px-5
-          py-2
-          rounded-md
-          font-medium
-          transition
-        "
-                  >
-                    Delete Meal
-                  </SubmitButton>
+                  <input
+                    type="hidden"
+                    name="redirectTo"
+                    value={redirectTo}
+                  />
+
+                  <AlertDialogAction asChild>
+                    <button
+                      type="submit"
+                      className="
+        w-full
+        rounded-lg
+        bg-red-600
+        px-4
+        py-2
+        font-medium
+        text-white
+        hover:bg-red-700
+      "
+                    >
+                      Delete Meal
+                    </button>
+                  </AlertDialogAction>
                 </form>
 
               </AlertDialogFooter>

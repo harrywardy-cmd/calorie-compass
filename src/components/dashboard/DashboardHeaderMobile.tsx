@@ -1,7 +1,14 @@
+"use client";
 
 import { UserButton } from "@clerk/nextjs";
-import { Settings, Plus } from "lucide-react";
+import {
+  Settings,
+  Plus,
+  History,
+} from "lucide-react";
+
 import LoadingLink from "../ui/LoadingLink";
+import NavButton from "@/components/ui/NavButton";
 
 // Mobile-only dashboard header
 export default function DashboardHeaderMobile() {
@@ -25,21 +32,21 @@ export default function DashboardHeaderMobile() {
           {/* Actions */}
           <div className="flex items-center gap-2">
 
-            {/* Settings */}
-            <LoadingLink
-              href="/settings"
-              className="
-                p-2
-                rounded-xl
-                border
-                hover:bg-gray-100
-                transition
-              "
-            >
-              <Settings size={18} />
-            </LoadingLink>
+            {/* History */}
+            <NavButton
+              href="/dashboard/history"
+              icon={History}
+              showLabel={false}
+            />
 
-            {/* Clerk User Menu */}
+            {/* Settings */}
+            <NavButton
+              href="/settings"
+              icon={Settings}
+              showLabel={false}
+            />
+
+            {/* User Menu */}
             <UserButton
               appearance={{
                 elements: {
@@ -47,6 +54,7 @@ export default function DashboardHeaderMobile() {
                 },
               }}
             />
+
           </div>
         </div>
 
@@ -56,28 +64,14 @@ export default function DashboardHeaderMobile() {
         </p>
 
         {/* Add Meal Button */}
-        <LoadingLink
+        <NavButton
           href="/meals/new"
-          className="
-            mt-4
-            w-full
-            flex
-            items-center
-            justify-center
-            gap-2
-            bg-black
-            text-white
-            py-3
-            rounded-xl
-            font-medium
-            shadow-sm
-            hover:bg-gray-800
-            transition
-          "
+          icon={Plus}
+          variant="primary"
+          fullWidth
         >
-          <Plus size={18} />
           Add Meal
-        </LoadingLink>
+        </NavButton>
       </div>
     </header>
   );

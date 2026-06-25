@@ -1,6 +1,13 @@
+"use client";
+
 import LoadingLink from "@/components/ui/LoadingLink";
+import NavButton from "@/components/ui/NavButton";
 import { UserButton } from "@clerk/nextjs";
-import { Settings, Plus } from "lucide-react";
+import {
+  Settings,
+  Plus,
+  History,
+} from "lucide-react";
 
 // Desktop-only dashboard header
 export default function DashboardHeaderDesktop() {
@@ -15,12 +22,12 @@ export default function DashboardHeaderDesktop() {
 
           {/* Branding Section */}
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
+            <h1 className="flex items-center gap-2 text-3xl font-bold">
               <span>🧭</span>
               <span>Calorie Compass</span>
             </h1>
 
-            <p className="text-sm text-white/80 mt-1">
+            <p className="mt-1 text-sm text-white/80">
               Track calories and nutrition effortlessly
             </p>
           </div>
@@ -28,52 +35,42 @@ export default function DashboardHeaderDesktop() {
           {/* Navigation Actions */}
           <div className="flex items-center gap-3">
 
-            {/* Add Meal Button */}
-            <LoadingLink
+            {/* Add Meal */}
+            <NavButton
               href="/meals/new"
-              className="
-    flex
-    items-center
-    gap-2
-    bg-black
-    text-white
-    px-5
-    py-2.5
-    rounded-xl
-    hover:bg-gray-800
-    transition
-    font-medium
-    shadow-sm
-  "
+              icon={Plus}
+              variant="primary"
             >
-              <Plus size={18} />
               Add Meal
-            </LoadingLink>
+            </NavButton>
 
-            {/* Settings Button */}
-            <LoadingLink
-              href="/settings"
-              className="
-    p-2.5
-    rounded-xl
-    border
-    hover:bg-gray-100
-    transition
-  "
+            {/* Meal History */}
+            <NavButton
+              href="/dashboard/history"
+              icon={History}
             >
-              <Settings size={20} />
-            </LoadingLink>
+              History
+            </NavButton>
 
-            {/* User Profile Menu */}
+            {/* Settings */}
+            <NavButton
+              href="/settings"
+              icon={Settings}
+              showLabel={false}
+            />
+
+            {/* User Profile */}
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: "w-10 h-10",
+                  avatarBox: "h-10 w-10",
                 },
               }}
             />
+
           </div>
         </div>
+
       </div>
     </header>
   );

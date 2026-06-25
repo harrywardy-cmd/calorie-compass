@@ -12,44 +12,50 @@ export async function deleteMeal(
   // Get the currently logged-in user's Clerk ID
   const { userId } = await auth();
 
-  // Prevent unauthenticated users from deleting meals
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
-  // Retrieve the meal ID from the form submission
+  // Retrieve values from the form
   const mealId = formData.get(
     "mealId"
   ) as string;
 
-  // Find the meal in the database
+  const redirectTo =
+    (formData.get("redirectTo") as string) ??
+    "/dashboard";
+
+  // Validate the meal ID
+  if (!mealId) {
+    throw new Error("Meal ID is missing");
+  }
+
+  // Find the meal
   const meal = await prisma.meal.findUnique({
     where: {
       id: mealId,
     },
   });
 
-  // Ensure the meal exists before attempting deletion
   if (!meal) {
     throw new Error("Meal not found");
   }
 
-  // Verify that the meal belongs to the current user
-  // This prevents users from deleting other users' meals
+  // Ensure the meal belongs to the logged-in user
   if (meal.userId !== userId) {
     throw new Error("Unauthorized");
   }
 
-  // Delete the meal from the database
+  // Delete the meal
   await prisma.meal.delete({
     where: {
       id: mealId,
     },
   });
 
-  // Clear the cached dashboard page so fresh data is shown
-  revalidatePath("/dashboard");
+  // Refresh the page the user came from
+  revalidatePath(redirectTo);
 
-  // Redirect the user back to the dashboard
-  redirect("/dashboard");
+  // Redirect back to that page
+  redirect(redirectTo);
 }
