@@ -7,11 +7,19 @@ import { ROUTES } from "@/lib/routes";
 // Props required for displaying the user's recent meals
 type RecentMealsProps = {
   meals: Meal[];
+
+  title?: string;
+  subtitle?: string;
+
+  redirectTo?: string;
 };
 
 // Displays a list of recently logged meals
 export default function RecentMeals({
   meals,
+  title = "Recent Meals",
+  subtitle = "Your latest logged meals",
+  redirectTo = ROUTES.dashboard,
 }: RecentMealsProps) {
   return (
     <section className="mb-8">
@@ -21,11 +29,11 @@ export default function RecentMeals({
 
         <div>
           <h2 className="text-2xl font-bold">
-            Recent Meals
+            {title}
           </h2>
 
           <p className="text-sm text-gray-500">
-            Your latest logged meals
+            {subtitle}
           </p>
         </div>
 
@@ -85,7 +93,7 @@ export default function RecentMeals({
               <MealCard
                 key={meal.id}
                 meal={meal}
-                redirectTo={ROUTES.dashboard}
+                redirectTo={redirectTo}
               />
             ))}
           </div>

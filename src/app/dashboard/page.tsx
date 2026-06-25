@@ -11,7 +11,7 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ProgressCard from "@/components/dashboard/ProgressCard";
 import StatsCards from "@/components/dashboard/StatsCards";
 import InsightsCard from "@/components/dashboard/InsightsCard";
-import RecentMeals from "@/components/dashboard/RecentMeals";
+import MealList from "@/components/dashboard/MealList";
 import WeeklyChartCard from "@/components/dashboard/WeeklyChartCard";
 
 
@@ -50,6 +50,7 @@ export default async function Dashboard() {
       createdAt: "desc",
     },
   });
+  
 
   // Build all dashboard data (today's meals, nutrition,
   // progress, and weekly chart)
@@ -107,7 +108,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Recently logged meals */}
-        <RecentMeals meals={dashboard.todayMeals} />
+        <MealList meals={dashboard.todayMeals} />
 
         {/* Nutrition statistics cards */}
         <StatsCards

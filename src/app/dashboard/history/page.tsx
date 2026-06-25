@@ -6,12 +6,17 @@ import { prisma } from "@/lib/prisma";
 import HistoryList from "@/components/history/HistoryList";
 
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import MealCard from "@/components/dashboard/MealCard";
 import { ROUTES } from "@/lib/routes";
+import { getLocalDateKey } from "@/utils/date";
 
 
-
-export default async function MealHistoryPage() {
+export default async function MealHistoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    date?: string;
+  }>;
+}) {
   // Get authenticated user
   const { userId } = await auth();
 
@@ -19,6 +24,11 @@ export default async function MealHistoryPage() {
     redirect("/sign-in");
   }
 
+  const { date } = await searchParams;
+
+  // Default to today if no date is supplied
+  const selectedDate =
+    date ?? getLocalDateKey(new Date());
   // Fetch every meal
   const meals = await prisma.meal.findMany({
     where: {
@@ -28,6 +38,13 @@ export default async function MealHistoryPage() {
       createdAt: "desc",
     },
   });
+
+  // Only keep meals from the selected day
+  const mealsForDay = meals.filter(
+    (meal) =>
+      getLocalDateKey(meal.createdAt) ===
+      selectedDate
+  );
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -47,17 +64,20 @@ export default async function MealHistoryPage() {
           </Link>
 
           <h1 className="text-4xl font-bold">
-            🍽 Meal History
+            📖 Nutrition Journal
           </h1>
 
           <p className="text-gray-500 mt-2">
-            Browse every meal you've logged.
+            Viewing meals for{" "}
+            <span className="font-medium text-gray-700">
+              {selectedDate}
+            </span>
           </p>
 
         </div>
 
         {/* History Card */}
-        <HistoryList meals={meals} />
+        <HistoryList meals={mealsForDay} />
 
       </div>
     </main>
