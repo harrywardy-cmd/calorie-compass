@@ -4,7 +4,10 @@ import { prisma } from "@/lib/prisma";
 import {
   getTodayMeals,
   buildWeeklyChart,
+  calculateProgress,
 } from "@/lib/dashboard/dashboard-utils";
+
+
 
 // Dashboard UI components
 import DashboardToast from "@/components/dashboard/dashboard-toast";
@@ -52,96 +55,43 @@ export default async function Dashboard() {
     },
   });
 
-  // Filter today's meals
-  const todayMeals =
-    getTodayMeals(meals);
+  // Filter meals that belong to today
+  const todayMeals = getTodayMeals(meals);
 
-  // Calculate total calories consumed today
-  const totalCalories = todayMeals.reduce(
-    (sum, meal) => sum + meal.calories,
-    0
+  // Calculate today's nutrition totals
+  const nutrition = todayMeals.reduce(
+    (totals, meal) => {
+      totals.calories += meal.calories;
+      totals.protein += meal.protein;
+      totals.carbs += meal.carbs;
+      totals.fat += meal.fat;
+
+      return totals;
+    },
+    {
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+    }
   );
 
-  // Calculate total protein consumed today
-  const totalProtein = todayMeals.reduce(
-    (sum, meal) => sum + meal.protein,
-    0
-  );
+  // Extract the calculated totals
+  const totalCalories = nutrition.calories;
+  const totalProtein = nutrition.protein;
+  const totalCarbs = nutrition.carbs;
+  const totalFat = nutrition.fat;
 
-  // Calculate total carbohydrates consumed today
-  const totalCarbs = todayMeals.reduce(
-    (sum, meal) => sum + meal.carbs,
-    0
-  );
-
-  // Calculate total fat consumed today
-  const totalFat = todayMeals.reduce(
-    (sum, meal) => sum + meal.fat,
-    0
-  );
-
-  // Get the user's daily calorie goal
+  // User's daily calorie goal
   const calorieGoal = user.calorieGoal;
 
-  // Calculate progress toward calorie goal as a percentage
-  const caloriePercentage = Math.round(
-    (totalCalories / calorieGoal) * 100
+  const progress = calculateProgress(
+    totalCalories,
+    calorieGoal
   );
 
-  // Default progress image (seed stage)
-  let progressImage = "/progress/seed.png";
-
-  // Select the appropriate growth stage image
-  if (caloriePercentage >= 120) {
-    progressImage = "/progress/dead.png";
-  } else if (caloriePercentage >= 100) {
-    progressImage = "/progress/golden-tree.png";
-  } else if (caloriePercentage >= 75) {
-    progressImage = "/progress/fruit-tree.png";
-  } else if (caloriePercentage >= 50) {
-    progressImage = "/progress/tree.png";
-  } else if (caloriePercentage >= 25) {
-    progressImage = "/progress/sprout.png";
-  }
-
-  // Default motivational message
-  let progressMessage = "Let's get started!";
-
-  // Update message based on calorie goal progress
-  if (caloriePercentage >= 120) {
-    progressMessage =
-      "You've gone well over your goal today.";
-  } else if (caloriePercentage > 100) {
-    progressMessage =
-      "You've exceeded your goal.";
-  } else if (caloriePercentage === 100) {
-    progressMessage =
-      "Goal achieved!";
-  } else if (caloriePercentage >= 75) {
-    progressMessage =
-      "Almost there!";
-  } else if (caloriePercentage >= 50) {
-    progressMessage =
-      "Great progress!";
-  } else if (caloriePercentage >= 25) {
-    progressMessage =
-      "Building momentum!";
-  }
-
-  // Default progress bar colour
-  let progressBarClass = "bg-blue-500";
-
-  // Change colour depending on progress
-  if (caloriePercentage >= 120) {
-    progressBarClass = "bg-red-600";
-  } else if (caloriePercentage > 100) {
-    progressBarClass = "bg-orange-500";
-  } else if (caloriePercentage === 100) {
-    progressBarClass = "bg-green-500";
-  }
-
-const chartData =
-  buildWeeklyChart(meals);
+  const chartData =
+    buildWeeklyChart(meals);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -156,12 +106,11 @@ const chartData =
         <ProgressCard
           totalCalories={totalCalories}
           calorieGoal={calorieGoal}
-          caloriePercentage={caloriePercentage}
-          progressMessage={progressMessage}
-          progressImage={progressImage}
-          progressBarClass={progressBarClass}
+          caloriePercentage={progress.caloriePercentage}
+          progressMessage={progress.progressMessage}
+          progressImage={progress.progressImage}
+          progressBarClass={progress.progressBarClass}
         />
-
 
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -169,7 +118,7 @@ const chartData =
           <InsightsCard
             totalCalories={totalCalories}
             mealsCount={todayMeals.length}
-            caloriePercentage={caloriePercentage}
+            caloriePercentage={progress.caloriePercentage}
           />
 
           {/* Weekly calorie tracking chart */}
