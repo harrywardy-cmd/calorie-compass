@@ -20,6 +20,29 @@ export function getTodayMeals(
   );
 }
 
+// Calculates the nutrition totals for a collection of meals
+export function calculateNutrition(
+  meals: Meal[]
+) {
+  return meals.reduce(
+    (totals, meal) => {
+      totals.calories += meal.calories;
+      totals.protein += meal.protein;
+      totals.carbs += meal.carbs;
+      totals.fat += meal.fat;
+
+      return totals;
+    },
+    {
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+    }
+  );
+}
+
+
 // Returns the last seven calendar days, including today
 export function getLastSevenDays(
   now = new Date()
@@ -122,5 +145,34 @@ export function calculateProgress(
     progressImage,
     progressMessage,
     progressBarClass,
+  };
+}
+
+// Builds all dashboard data from the user's meals
+export function buildDashboardData(
+  meals: Meal[],
+  calorieGoal: number
+) {
+  // Filter today's meals
+  const todayMeals = getTodayMeals(meals);
+
+  // Calculate today's nutrition totals
+  const nutrition = calculateNutrition(todayMeals);
+
+  // Calculate progress toward the calorie goal
+  const progress = calculateProgress(
+    nutrition.calories,
+    calorieGoal
+  );
+
+  // Build the weekly calorie chart
+  const chartData = buildWeeklyChart(meals);
+
+  return {
+    todayMeals,
+    nutrition,
+    progress,
+    chartData,
+    calorieGoal,
   };
 }

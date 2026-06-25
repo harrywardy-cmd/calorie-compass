@@ -2,12 +2,8 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import {
-  getTodayMeals,
-  buildWeeklyChart,
-  calculateProgress,
+  buildDashboardData,
 } from "@/lib/dashboard/dashboard-utils";
-
-
 
 // Dashboard UI components
 import DashboardToast from "@/components/dashboard/dashboard-toast";
@@ -55,43 +51,22 @@ export default async function Dashboard() {
     },
   });
 
-  // Filter meals that belong to today
-  const todayMeals = getTodayMeals(meals);
+  // Build all dashboard data (today's meals, nutrition,
+  // progress, and weekly chart)
 
-  // Calculate today's nutrition totals
-  const nutrition = todayMeals.reduce(
-    (totals, meal) => {
-      totals.calories += meal.calories;
-      totals.protein += meal.protein;
-      totals.carbs += meal.carbs;
-      totals.fat += meal.fat;
-
-      return totals;
-    },
-    {
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-    }
+  const dashboard = buildDashboardData(
+    meals,
+    user.calorieGoal
   );
 
-  // Extract the calculated totals
-  const totalCalories = nutrition.calories;
-  const totalProtein = nutrition.protein;
-  const totalCarbs = nutrition.carbs;
-  const totalFat = nutrition.fat;
+  const {
+    nutrition,
+    progress,
+    chartData,
+    todayMeals,
+    calorieGoal,
+  } = dashboard;
 
-  // User's daily calorie goal
-  const calorieGoal = user.calorieGoal;
-
-  const progress = calculateProgress(
-    totalCalories,
-    calorieGoal
-  );
-
-  const chartData =
-    buildWeeklyChart(meals);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -104,7 +79,7 @@ export default async function Dashboard() {
       <div className="max-w-7xl mx-auto p-8">
         {/* Calorie goal progress section */}
         <ProgressCard
-          totalCalories={totalCalories}
+          totalCalories={nutrition.calories}
           calorieGoal={calorieGoal}
           caloriePercentage={progress.caloriePercentage}
           progressMessage={progress.progressMessage}
@@ -114,18 +89,18 @@ export default async function Dashboard() {
 
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
           {/* Daily insights and summary */}
-          <InsightsCard
-            totalCalories={totalCalories}
-            mealsCount={todayMeals.length}
-            caloriePercentage={progress.caloriePercentage}
+          <WeeklyChartCard
+            chartData={chartData}
+            calorieGoal={calorieGoal}
           />
 
           {/* Weekly calorie tracking chart */}
           <div className="lg:col-span-2">
             <WeeklyChartCard
-              chartData={chartData}
-              calorieGoal={calorieGoal}
+              chartData={dashboard.chartData}
+              calorieGoal={dashboard.calorieGoal}
             />
           </div>
         </div>
@@ -135,10 +110,10 @@ export default async function Dashboard() {
 
         {/* Nutrition statistics cards */}
         <StatsCards
-          calories={totalCalories}
-          protein={totalProtein}
-          carbs={totalCarbs}
-          fat={totalFat}
+          calories={nutrition.calories}
+          protein={nutrition.protein}
+          carbs={nutrition.carbs}
+          fat={nutrition.fat}
         />
       </div>
     </main>
