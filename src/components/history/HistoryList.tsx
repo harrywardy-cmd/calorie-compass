@@ -8,62 +8,74 @@ import HistoryToolbar from "./HistoryToolbar";
 import { ROUTES } from "@/lib/routes";
 
 type HistoryListProps = {
-  meals: Meal[];
+    meals: Meal[];
 };
 
 export default function HistoryList({
-  meals,
+    meals,
 }: HistoryListProps) {
-  const [search, setSearch] = useState("");
+    const [search, setSearch] = useState("");
+    const [mealType, setMealType] = useState("All");
+    const filteredMeals = useMemo(() => {
+        const query = search.trim().toLowerCase();
 
-  const filteredMeals = useMemo(() => {
-    const query = search.trim().toLowerCase();
+        return meals.filter((meal) => {
+            const matchesSearch =
+                meal.mealName
+                    .toLowerCase()
+                    .includes(query);
 
-    if (!query) return meals;
+            const matchesMealType =
+                mealType === "All" ||
+                meal.mealType === mealType;
 
-    return meals.filter((meal) =>
-      meal.mealName
-        .toLowerCase()
-        .includes(query)
-    );
-  }, [meals, search]);
+            return (
+                matchesSearch &&
+                matchesMealType
+            );
+        });
+    }, [meals, search, mealType]);
 
-  return (
-    <>
-      <HistoryToolbar
-        search={search}
-        onSearchChange={setSearch}
-        totalMeals={meals.length}
-        filteredMeals={filteredMeals.length}
-      />
+    return (
+        <>
+            <HistoryToolbar
+                search={search}
+                onSearchChange={setSearch}
 
-      <div className="rounded-3xl border bg-white shadow-sm overflow-hidden">
+                mealType={mealType}
+                onMealTypeChange={setMealType}
 
-        {filteredMeals.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="mb-4 text-6xl">
-              🔍
-            </p>
-
-            <h2 className="text-2xl font-semibold">
-              No meals found
-            </h2>
-
-            <p className="mt-2 text-gray-500">
-              Try a different search.
-            </p>
-          </div>
-        ) : (
-          filteredMeals.map((meal) => (
-            <MealCard
-              key={meal.id}
-              meal={meal}
-              redirectTo={ROUTES.history}
+                totalMeals={meals.length}
+                filteredMeals={filteredMeals.length}
             />
-          ))
-        )}
 
-      </div>
-    </>
-  );
+            <div className="rounded-3xl border bg-white shadow-sm overflow-hidden">
+
+                {filteredMeals.length === 0 ? (
+                    <div className="py-20 text-center">
+                        <p className="mb-4 text-6xl">
+                            🔍
+                        </p>
+
+                        <h2 className="text-2xl font-semibold">
+                            No meals found
+                        </h2>
+
+                        <p className="mt-2 text-gray-500">
+                            Try a different search.
+                        </p>
+                    </div>
+                ) : (
+                    filteredMeals.map((meal) => (
+                        <MealCard
+                            key={meal.id}
+                            meal={meal}
+                            redirectTo={ROUTES.history}
+                        />
+                    ))
+                )}
+
+            </div>
+        </>
+    );
 }
