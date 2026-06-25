@@ -23,6 +23,11 @@ export async function createMeal(formData: FormData) {
 
   const mealType = formData.get("mealType") as string;
 
+  // Optional meal date selected by the user
+  const mealDate = formData.get(
+    "mealDate"
+  ) as string;
+
   // Nutrition values
   const protein = Number(
     formData.get("protein") ?? 0
@@ -48,6 +53,25 @@ export async function createMeal(formData: FormData) {
     formData.get("aiGenerated") ===
     "true";
 
+  // Use the selected meal date if provided.
+  // Otherwise, default to the current date and time.
+  const createdAt = mealDate
+    ? (() => {
+      const selectedDate = new Date(mealDate);
+      const now = new Date();
+
+      // Preserve the current time so meals appear
+      // naturally within the selected day.
+      selectedDate.setHours(
+        now.getHours(),
+        now.getMinutes(),
+        now.getSeconds(),
+        now.getMilliseconds()
+      );
+
+      return selectedDate;
+    })()
+    : new Date();
   // Create a new meal record in the database
   await prisma.meal.create({
     data: {
@@ -63,6 +87,8 @@ export async function createMeal(formData: FormData) {
 
       confidence,
       aiGenerated,
+
+      createdAt,
 
       imageUrl: null,
     },

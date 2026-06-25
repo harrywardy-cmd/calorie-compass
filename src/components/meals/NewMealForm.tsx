@@ -41,6 +41,17 @@ export default function NewMealForm() {
     const [aiGenerated, setAiGenerated] =
         useState(false);
 
+    // Default meal date (today)
+    const today = new Date();
+
+    today.setMinutes(
+        today.getMinutes() - today.getTimezoneOffset()
+    );
+
+    const defaultMealDate = today
+        .toISOString()
+        .split("T")[0];
+
     return (
         <form
             action={createMeal}
@@ -216,6 +227,39 @@ export default function NewMealForm() {
                         </select>
                     </div>
                 </div>
+            </div>
+
+            {/* Meal Date */}
+            <div>
+                <label className="mb-2 block text-sm font-medium text-gray-600">
+                    Meal Date
+                    <span className="ml-2 text-xs font-normal text-gray-400">
+                        (Optional)
+                    </span>
+                </label>
+
+                <input
+                    type="date"
+                    name="mealDate"
+                    defaultValue={defaultMealDate}
+                    className="
+    w-full
+    rounded-2xl
+    border
+    border-gray-200
+    bg-gray-50
+    p-4
+    text-lg
+    transition
+    focus:border-blue-500
+    focus:bg-white
+    focus:outline-none
+  "
+                />
+
+                <p className="mt-2 text-sm text-gray-500">
+                    Defaults to today's date. Change it to log a meal for another day.
+                </p>
             </div>
 
             {/* =======================================================
