@@ -55,3 +55,36 @@ export function getLastLocalDateKeys(
 
   return dates;
 }
+// Formats a meal's logged date and time
+// Formats a meal's logged date and time
+export function formatMealDate(date: Date) {
+  const now = new Date();
+
+  const dateString = date.toLocaleDateString("en-AU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  const timeString = date.toLocaleTimeString("en-AU", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  // Today
+  if (date.toDateString() === now.toDateString()) {
+    return `Today • ${dateString} • ${timeString}`;
+  }
+
+  // Yesterday
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+
+  if (date.toDateString() === yesterday.toDateString()) {
+    return `Yesterday • ${dateString} • ${timeString}`;
+  }
+
+  // Older dates
+  return `${dateString} • ${timeString}`;
+}

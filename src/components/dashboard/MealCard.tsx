@@ -3,6 +3,7 @@ import { Pencil, Trash2, Flame } from "lucide-react";
 import { Meal } from "@prisma/client";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { deleteMeal } from "@/app/dashboard/actions";
+import { formatMealDate } from "@/utils/date";
 
 import {
   AlertDialog,
@@ -76,8 +77,9 @@ export default function MealCard({
 
 
           {/* Created Date */}
-          <p className="text-xs text-gray-400 mt-3">
-            Logged {new Date(meal.createdAt).toLocaleDateString()}
+          <p className="text-xs text-gray-400 mt-3 flex items-center gap-1">
+            <span>🕒</span>
+            <span>{formatMealDate(new Date(meal.createdAt))}</span>
           </p>
         </div>
         {/* AI Badge */}
