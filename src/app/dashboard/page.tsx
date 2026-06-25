@@ -91,29 +91,30 @@ export default async function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
           {/* Daily insights and summary */}
-          <WeeklyChartCard
-            chartData={chartData}
-            calorieGoal={calorieGoal}
+          <InsightsCard
+            totalCalories={nutrition.calories}
+            mealsCount={todayMeals.length}
+            caloriePercentage={progress.caloriePercentage}
           />
 
           {/* Weekly calorie tracking chart */}
           <div className="lg:col-span-2">
             <WeeklyChartCard
-              chartData={dashboard.chartData}
-              calorieGoal={dashboard.calorieGoal}
+              chartData={chartData}
+              calorieGoal={calorieGoal}
             />
           </div>
         </div>
 
         {/* Recently logged meals */}
-        <RecentMeals meals={todayMeals} />
+        <RecentMeals meals={dashboard.todayMeals} />
 
         {/* Nutrition statistics cards */}
         <StatsCards
-          calories={nutrition.calories}
-          protein={nutrition.protein}
-          carbs={nutrition.carbs}
-          fat={nutrition.fat}
+          calories={dashboard.nutrition.calories}
+          protein={dashboard.nutrition.protein}
+          carbs={dashboard.nutrition.carbs}
+          fat={dashboard.nutrition.fat}
         />
       </div>
     </main>
