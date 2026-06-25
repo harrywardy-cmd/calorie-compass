@@ -1,6 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import {
+  getTodayMeals,
+  buildWeeklyChart,
+} from "@/lib/dashboard/dashboard-utils";
 
 // Dashboard UI components
 import DashboardToast from "@/components/dashboard/dashboard-toast";
@@ -10,6 +14,8 @@ import StatsCards from "@/components/dashboard/StatsCards";
 import InsightsCard from "@/components/dashboard/InsightsCard";
 import RecentMeals from "@/components/dashboard/RecentMeals";
 import WeeklyChartCard from "@/components/dashboard/WeeklyChartCard";
+
+
 
 export default async function Dashboard() {
   // Get the currently authenticated Clerk user
@@ -36,56 +42,40 @@ export default async function Dashboard() {
     });
   }
 
-  // Melbourne-based current date/time
-  const melbourneNow = new Date(
-    new Date().toLocaleString("en-US", {
-      timeZone: "Australia/Melbourne",
-    })
-  );
-
-  // Start of today in Melbourne
-  const today = new Date(melbourneNow);
-  today.setHours(0, 0, 0, 0);
-
-  // Start of tomorrow in Melbourne
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  // Fetch today's meals
+  // Fetch all meals
   const meals = await prisma.meal.findMany({
     where: {
       userId,
-      createdAt: {
-        gte: today,
-        lt: tomorrow,
-      },
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 
+  // Filter today's meals
+  const todayMeals =
+    getTodayMeals(meals);
 
   // Calculate total calories consumed today
-  const totalCalories = meals.reduce(
+  const totalCalories = todayMeals.reduce(
     (sum, meal) => sum + meal.calories,
     0
   );
 
   // Calculate total protein consumed today
-  const totalProtein = meals.reduce(
+  const totalProtein = todayMeals.reduce(
     (sum, meal) => sum + meal.protein,
     0
   );
 
-  // Calculate total carbs consumed today
-  const totalCarbs = meals.reduce(
+  // Calculate total carbohydrates consumed today
+  const totalCarbs = todayMeals.reduce(
     (sum, meal) => sum + meal.carbs,
     0
   );
 
   // Calculate total fat consumed today
-  const totalFat = meals.reduce(
+  const totalFat = todayMeals.reduce(
     (sum, meal) => sum + meal.fat,
     0
   );
@@ -150,76 +140,8 @@ export default async function Dashboard() {
     progressBarClass = "bg-green-500";
   }
 
-  // Start of the 7-day chart window
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(
-    sevenDaysAgo.getDate() - 6
-  );
-
-  // Fetch meals from the last 7 days
-  const mealsLastWeek =
-    await prisma.meal.findMany({
-      where: {
-        userId,
-        createdAt: {
-          gte: sevenDaysAgo,
-        },
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
-
-  // Data structure used by the weekly calories chart
-  const chartData: {
-    day: string;
-    calories: number;
-  }[] = [];
-
-
-  // Build chart data for each of the last 7 days
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-
-    date.setDate(
-      date.getDate() - i
-    );
-
-    const dayStart = new Date(date);
-    dayStart.setHours(0, 0, 0, 0);
-
-    const dayEnd = new Date(dayStart);
-    dayEnd.setDate(dayEnd.getDate() + 1);
-
-    // Create short day labels (Mon, Tue, Wed, etc.)
-    const dayLabel =
-      date.toLocaleDateString(
-        "en-AU",
-        {
-          weekday: "short",
-        }
-      );
-
-    // Calculate total calories for this day
-    const dayCalories =
-      mealsLastWeek
-        .filter(
-          (meal) =>
-            meal.createdAt >= dayStart &&
-            meal.createdAt < dayEnd
-        )
-        .reduce(
-          (sum, meal) =>
-            sum + meal.calories,
-          0
-        );
-
-    // Add the day's data to the chart
-    chartData.push({
-      day: dayLabel,
-      calories: dayCalories,
-    });
-  }
+const chartData =
+  buildWeeklyChart(meals);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -246,7 +168,7 @@ export default async function Dashboard() {
           {/* Daily insights and summary */}
           <InsightsCard
             totalCalories={totalCalories}
-            mealsCount={meals.length}
+            mealsCount={todayMeals.length}
             caloriePercentage={caloriePercentage}
           />
 
@@ -260,7 +182,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Recently logged meals */}
-        <RecentMeals meals={meals} />
+        <RecentMeals meals={todayMeals} />
 
         {/* Nutrition statistics cards */}
         <StatsCards
