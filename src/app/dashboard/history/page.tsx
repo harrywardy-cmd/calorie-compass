@@ -9,6 +9,8 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import { ROUTES } from "@/lib/routes";
 import { getLocalDateKey } from "@/utils/date";
 
+import HistoryDateNavigator from "@/components/history/HistoryDateNavigator";
+
 
 export default async function MealHistoryPage({
   searchParams,
@@ -66,13 +68,9 @@ export default async function MealHistoryPage({
           <h1 className="text-4xl font-bold">
             📖 Nutrition Journal
           </h1>
-
-          <p className="text-gray-500 mt-2">
-            Viewing meals for{" "}
-            <span className="font-medium text-gray-700">
-              {selectedDate}
-            </span>
-          </p>
+          <HistoryDateNavigator
+            selectedDate={selectedDate}
+          />
 
         </div>
 
