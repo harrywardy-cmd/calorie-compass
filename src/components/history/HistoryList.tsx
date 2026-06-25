@@ -6,6 +6,7 @@ import { Meal } from "@prisma/client";
 import MealCard from "@/components/dashboard/MealCard";
 import HistoryToolbar from "./HistoryToolbar";
 import { ROUTES } from "@/lib/routes";
+import MealGroup from "./MealGroup";
 
 type HistoryListProps = {
     meals: Meal[];
@@ -35,6 +36,22 @@ export default function HistoryList({
             );
         });
     }, [meals, search, mealType]);
+
+    const breakfastMeals = filteredMeals.filter(
+        (meal) => meal.mealType === "Breakfast"
+    );
+
+    const lunchMeals = filteredMeals.filter(
+        (meal) => meal.mealType === "Lunch"
+    );
+
+    const dinnerMeals = filteredMeals.filter(
+        (meal) => meal.mealType === "Dinner"
+    );
+
+    const snackMeals = filteredMeals.filter(
+        (meal) => meal.mealType === "Snack"
+    );
 
     return (
         <>
@@ -66,13 +83,35 @@ export default function HistoryList({
                         </p>
                     </div>
                 ) : (
-                    filteredMeals.map((meal) => (
-                        <MealCard
-                            key={meal.id}
-                            meal={meal}
+                    <>
+                        <MealGroup
+                            title="Breakfast"
+                            emoji="🍳"
+                            meals={breakfastMeals}
                             redirectTo={ROUTES.history}
                         />
-                    ))
+
+                        <MealGroup
+                            title="Lunch"
+                            emoji="🥪"
+                            meals={lunchMeals}
+                            redirectTo={ROUTES.history}
+                        />
+
+                        <MealGroup
+                            title="Dinner"
+                            emoji="🍝"
+                            meals={dinnerMeals}
+                            redirectTo={ROUTES.history}
+                        />
+
+                        <MealGroup
+                            title="Snack"
+                            emoji="🍎"
+                            meals={snackMeals}
+                            redirectTo={ROUTES.history}
+                        />
+                    </>
                 )}
 
             </div>
