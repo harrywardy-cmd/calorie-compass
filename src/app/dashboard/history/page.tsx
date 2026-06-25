@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import MealCard from "@/components/dashboard/MealCard";
+import { ROUTES } from "@/lib/routes";
 
 export default async function MealHistoryPage() {
   // Get authenticated user
@@ -67,7 +68,7 @@ export default async function MealHistoryPage() {
               <MealCard
                 key={meal.id}
                 meal={meal}
-                redirectTo="/dashboard/history"
+                redirectTo={ROUTES.history}
               />
             ))
           )}

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
 
 // Deletes a meal belonging to the currently authenticated user
 export async function deleteMeal(
@@ -21,9 +22,9 @@ export async function deleteMeal(
     "mealId"
   ) as string;
 
-  const redirectTo =
-    (formData.get("redirectTo") as string) ??
-    "/dashboard";
+const redirectTo =
+  (formData.get("redirectTo") as string) ??
+  ROUTES.dashboard;
 
   // Validate the meal ID
   if (!mealId) {

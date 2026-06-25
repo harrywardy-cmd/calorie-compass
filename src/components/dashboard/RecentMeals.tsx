@@ -2,6 +2,7 @@ import MealCard from "./MealCard";
 
 import { Meal } from "@prisma/client";
 import LoadingLink from "../ui/LoadingLink";
+import { ROUTES } from "@/lib/routes";
 
 // Props required for displaying the user's recent meals
 type RecentMealsProps = {
@@ -84,7 +85,7 @@ export default function RecentMeals({
               <MealCard
                 key={meal.id}
                 meal={meal}
-                redirectTo="/dashboard"
+                redirectTo={ROUTES.dashboard}
               />
             ))}
           </div>
