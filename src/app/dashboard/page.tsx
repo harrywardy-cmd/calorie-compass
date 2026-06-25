@@ -6,7 +6,7 @@ import {
 } from "@/lib/dashboard/dashboard-utils";
 
 // Dashboard UI components
-import DashboardToast from "@/components/dashboard/dashboard-toast";
+import DashboardToast from "@/components/dashboard/DashboardToast";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ProgressCard from "@/components/dashboard/ProgressCard";
 import StatsCards from "@/components/dashboard/StatsCards";

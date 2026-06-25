@@ -96,19 +96,21 @@ export default function MealCard({
 
           {/* Edit */}
           <LoadingLink
-            href={`/meals/${meal.id}/edit`}
+            href={`/meals/${meal.id}/edit?redirectTo=${encodeURIComponent(
+              redirectTo
+            )}`}
             className="
-              inline-flex
-              items-center
-              gap-2
-              px-3
-              py-2
-              rounded-lg
-              border
-              text-blue-600
-              hover:bg-blue-50
-              transition
-            "
+    inline-flex
+    items-center
+    gap-2
+    px-3
+    py-2
+    rounded-lg
+    border
+    text-blue-600
+    hover:bg-blue-50
+    transition
+  "
           >
             <Pencil size={16} />
             <span className="hidden sm:inline">

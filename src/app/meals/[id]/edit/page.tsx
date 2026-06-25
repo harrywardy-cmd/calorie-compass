@@ -2,16 +2,25 @@ import LoadingLink from "@/components/ui/LoadingLink";
 import { prisma } from "@/lib/prisma";
 import { updateMeal } from "./actions";
 import SubmitButton from "@/components/ui/SubmitButton";
+import { ROUTES } from "@/lib/routes";
 
 // Edit Meal page component
 // Displays a form allowing users to update an existing meal
 export default async function EditMealPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{
+    redirectTo?: string;
+  }>;
 }) {
   // Extract the meal ID from the route parameters
   const { id } = await params;
+
+  const {
+    redirectTo = ROUTES.dashboard,
+  } = await searchParams;
 
   // Fetch the meal from the database
   const meal = await prisma.meal.findUnique({
@@ -40,7 +49,7 @@ export default async function EditMealPage({
           </h1>
 
           <LoadingLink
-            href="/dashboard"
+            href={redirectTo}
             className="inline-block mt-4 text-blue-600"
           >
             Return to Dashboard
@@ -397,6 +406,12 @@ export default async function EditMealPage({
 
             <input
               type="hidden"
+              name="redirectTo"
+              value={redirectTo}
+            />
+
+            <input
+              type="hidden"
               name="confidence"
               value={meal.confidence ?? 0}
             />
@@ -422,7 +437,7 @@ export default async function EditMealPage({
             >
               {/* Cancel */}
               <LoadingLink
-                href="/dashboard"
+                href={redirectTo}
                 className="
               flex-1
               rounded-2xl

@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { ROUTES } from "@/lib/routes";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -84,9 +85,12 @@ export async function updateMeal(
   // =====================================================
   // Return user to dashboard
   // =====================================================
+  const redirectTo =
+    (formData.get("redirectTo") as string) ??
+    ROUTES.dashboard;
 
   redirect(
-    `/dashboard?success=meal-updated&meal=${encodeURIComponent(
+    `${redirectTo}?success=meal-updated&meal=${encodeURIComponent(
       mealName
     )}`
   );

@@ -13,6 +13,8 @@ export async function deleteMeal(
   // Get the currently logged-in user's Clerk ID
   const { userId } = await auth();
 
+  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -22,9 +24,9 @@ export async function deleteMeal(
     "mealId"
   ) as string;
 
-const redirectTo =
-  (formData.get("redirectTo") as string) ??
-  ROUTES.dashboard;
+  const redirectTo =
+    (formData.get("redirectTo") as string) ??
+    ROUTES.dashboard;
 
   // Validate the meal ID
   if (!mealId) {
@@ -57,6 +59,12 @@ const redirectTo =
   // Refresh the page the user came from
   revalidatePath(redirectTo);
 
+  const deletedMealName = meal.mealName;
+
   // Redirect back to that page
-  redirect(redirectTo);
+  redirect(
+    `${redirectTo}?success=meal-deleted&meal=${encodeURIComponent(
+      deletedMealName
+    )}`
+  );
 }
