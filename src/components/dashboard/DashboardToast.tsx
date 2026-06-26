@@ -3,58 +3,67 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+
 import {
-    toastStyle,
-    TOAST_DURATION,
+  toastStyle,
+  TOAST_DURATION,
 } from "@/lib/toast";
 
 // Displays dashboard success notifications
 export default function DashboardToast() {
-    const params = useSearchParams();
+  const params = useSearchParams();
 
-    // Prevent the toast from displaying multiple times
-    const shown = useRef(false);
+  // Prevent the toast from displaying multiple times
+  const shown = useRef(false);
 
-    useEffect(() => {
-        if (shown.current) return;
+  useEffect(() => {
+    if (shown.current) return;
 
-        const success = params.get("success");
+    const success = params.get("success");
 
-        if (!success) return;
+    if (!success) return;
 
-        shown.current = true;
+    shown.current = true;
 
-        const mealName = params.get("meal") ?? "Meal";
-        const calories = params.get("calories");
+    const mealName =
+      params.get("meal") ?? "Meal";
 
+    const calories =
+      params.get("calories");
 
+    // Toast configurations
+    const toastMessages = {
+      "meal-added": {
+        title: "🌱 Progress Updated!",
+        description: `${mealName}${
+          calories ? ` (${calories} kcal)` : ""
+        } has been added to your nutrition journal.`,
+      },
 
-        switch (success) {
-            case "meal-added":
-                toast.success("🌱 Progress Updated!", {
-                    description: `${mealName} (${calories} kcal) has been added to your nutrition journal.`,
-                    style: toastStyle,
-                    duration: TOAST_DURATION,
-                });
-                break;
+      "meal-updated": {
+        title: "✏️ Meal Updated!",
+        description: `${mealName} has been successfully updated.`,
+      },
 
-            case "meal-updated":
-                toast.success("✏️ Meal Updated!", {
-                    description: `${mealName} has been successfully updated.`,
-                    style: toastStyle,
-                    duration: TOAST_DURATION,
-                });
-                break;
+      "meal-deleted": {
+        title: "🗑️ Meal Deleted!",
+        description: `${mealName} has been removed from your nutrition journal.`,
+      },
+    } as const;
 
-            case "meal-deleted":
-                toast.success("🗑️ Meal Deleted!", {
-                    description: `${mealName} has been removed from your nutrition journal.`,
-                    style: toastStyle,
-                    duration: TOAST_DURATION,
-                });
-                break;
-        }
-    }, [params]);
+    const config =
+      toastMessages[
+        success as keyof typeof toastMessages
+      ];
 
-    return null;
+    if (!config) return;
+
+    toast.success(config.title, {
+      description: config.description,
+      style: toastStyle,
+      duration: TOAST_DURATION,
+    });
+  }, [params]);
+
+  return null;
 }

@@ -2,6 +2,9 @@ import { Meal } from "@prisma/client";
 import { CalendarDays, Flame, Pencil, Trash2 } from "lucide-react";
 import MealIcon from "./MealIcon";
 import { formatMealDate } from "@/utils/date";
+import MealBadge from "./MealBadge";
+import DeleteMealDialog from "./DeleteMealDialog";
+import { deleteMeal } from "@/app/dashboard/actions";
 
 type MealCardProps = {
   meal: Meal;
@@ -11,11 +14,14 @@ export default function MealCard({ meal }: MealCardProps) {
   return (
     <div
       className="
-    px-6
-    py-5
-    transition-colors
-    hover:bg-gray-50
-  "
+  group
+  px-6
+  py-5
+  transition-all
+  duration-300
+  hover:bg-blue-50/40
+  hover:shadow-inner
+"
     >
       <div
         className="
@@ -28,38 +34,25 @@ export default function MealCard({ meal }: MealCardProps) {
         {/* Left */}
         <div className="flex items-center gap-4">
           {/* Meal Icon */}
-            <MealIcon mealType={meal.mealType} />
-
+          <MealIcon mealType={meal.mealType} />
 
           {/* Meal Information */}
           <div>
             <h3
               className="
-        text-lg
-        font-semibold
-        text-slate-900
-      "
+    text-lg
+    font-semibold
+    text-gray-900
+    transition-colors
+    group-hover:text-blue-700
+  "
             >
               {meal.mealName}
             </h3>
 
             <div className="mt-1 flex flex-wrap items-center gap-3">
               {/* Meal Type Badge */}
-              <span
-                className="
-          rounded-full
-          bg-blue-50
-          border
-          border-blue-100
-          px-3
-          py-1
-          text-xs
-          font-semibold
-          text-blue-700
-        "
-              >
-                {meal.mealType}
-              </span>
+              <MealBadge mealType={meal.mealType} />
 
               {/* Calories */}
               <span
@@ -154,9 +147,12 @@ export default function MealCard({ meal }: MealCardProps) {
             hover:shadow-md
           "
           >
-            <Trash2 size={16} />
 
-            <span className="hidden sm:inline">Delete</span>
+            <DeleteMealDialog
+              mealId={meal.id}
+              mealName={meal.mealName}
+              deleteAction={deleteMeal}
+            />
           </button>
         </div>
       </div>
