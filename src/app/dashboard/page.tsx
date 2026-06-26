@@ -8,11 +8,11 @@ import DashboardToast from "@/components/dashboard/DashboardToast";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import StatsCards from "@/components/dashboard/StatsCards";
 import InsightsCard from "@/components/dashboard/InsightsCard";
-import MealList from "@/components/dashboard/MealList";
 import WeeklyChartCard from "@/components/dashboard/WeeklyChartCard";
 import DashboardStatusBar from "@/components/dashboard/DashboardStatusBar";
 import DashboardHero from "@/components/dashboard/DashboardHero";
 import { getLocalDateKey } from "@/utils/date";
+import MealList from "@/components/dashboard/meals/MealList";
 
 // Dashboard page
 // Displays the user's daily nutrition summary,
@@ -84,7 +84,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // weekly chart data and other dashboard metrics.
   // ======================================================
 
-  const dashboard = buildDashboardData(meals, user.calorieGoal);
+  const dashboard = buildDashboardData(meals, user.calorieGoal, selectedDate);
 
   // Extract the calculated dashboard values
   const { nutrition, progress, chartData, todayMeals, calorieGoal } = dashboard;
@@ -144,6 +144,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
             Today's Meals
             Displays meals logged for the current day.
         ================================================== */}
+
         <MealList meals={todayMeals} />
 
         {/* ==================================================

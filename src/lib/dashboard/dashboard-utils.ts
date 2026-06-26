@@ -5,18 +5,17 @@ import {
 } from "@/utils/date";
 
 
-// Filters meals that belong to today
-export function getTodayMeals(
+/**
+ * Returns all meals for a specific date.
+ */
+export function getMealsForDate(
   meals: Meal[],
-  now = new Date()
+  dateKey: string
 ) {
-  const todayKey =
-    getLocalDateKey(now);
-
   return meals.filter(
-    meal =>
+    (meal) =>
       getLocalDateKey(meal.createdAt) ===
-      todayKey
+      dateKey
   );
 }
 
@@ -151,10 +150,14 @@ export function calculateProgress(
 // Builds all dashboard data from the user's meals
 export function buildDashboardData(
   meals: Meal[],
-  calorieGoal: number
+  calorieGoal: number,
+  selectedDate: string
 ) {
-  // Filter today's meals
-  const todayMeals = getTodayMeals(meals);
+  // Get meals for the selected dashboard date
+  const todayMeals = getMealsForDate(
+    meals,
+    selectedDate
+  );
 
   // Calculate today's nutrition totals
   const nutrition = calculateNutrition(todayMeals);
