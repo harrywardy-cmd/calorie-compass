@@ -19,23 +19,22 @@ export default function MacroCard({
   icon: Icon,
   iconColor = "text-blue-500",
 }: MacroCardProps) {
-  const percentage = Math.min(
-    Math.round((value / goal) * 100),
-    100
-  );
-
   return (
     <div
       className="
+        flex
+        h-full
+        flex-col
         rounded-3xl
         border
+        border-gray-200
         bg-white
         p-6
         shadow-sm
         transition-all
-        duration-200
+        duration-300
         hover:-translate-y-1
-        hover:shadow-md
+        hover:shadow-lg
       "
     >
       {/* Header */}
@@ -45,32 +44,39 @@ export default function MacroCard({
           className={iconColor}
         />
 
-        <span className="text-sm font-medium text-gray-500">
+        <h3 className="text-sm font-medium text-gray-600">
           {title}
-        </span>
+        </h3>
       </div>
 
       {/* Value */}
-      <div className="mt-4">
-        <h2 className="text-5xl font-bold tracking-tight text-blue-600">
-          {value}
-          <span className="ml-1 text-2xl font-semibold">
+      <div className="mt-5">
+        <div className="flex items-end gap-1">
+          <span className="text-5xl font-bold leading-none text-blue-600">
+            {value}
+          </span>
+
+          <span className="pb-1 text-2xl font-semibold text-blue-600">
             {unit}
           </span>
-        </h2>
+        </div>
 
         <p className="mt-2 text-sm text-gray-500">
-          Goal: {goal}
-          {unit}
+          Goal:{" "}
+          <span className="font-medium text-gray-700">
+            {goal}
+            {unit}
+          </span>
         </p>
       </div>
 
       {/* Progress */}
-      <ProgressBar
-        value={value}
-        goal={goal}
-      />
-
+      <div className="mt-5">
+        <ProgressBar
+          value={value}
+          goal={goal}
+        />
+      </div>
     </div>
   );
 }

@@ -89,16 +89,16 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
 
   // Extract the calculated dashboard values
   const { nutrition, progress, chartData, todayMeals, calorieGoal } = dashboard;
+  const goals = {
+    calories: user.calorieGoal,
+    protein: user.proteinGoal,
+    carbs: user.carbGoal,
+    fat: user.fatGoal,
+  };
 
   const nutritionSummary: NutritionSummary = {
     totals: nutrition,
-
-    goals: {
-      calories: user.calorieGoal,
-      protein: 120,
-      carbs: 250,
-      fat: 65,
-    },
+    goals,
   };
 
   // ======================================================

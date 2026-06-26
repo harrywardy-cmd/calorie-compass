@@ -14,16 +14,6 @@ export default function StatsCards({
 }: StatsCardsProps) {
   return (
     <section className="mb-10">
-      {/* Section Header */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Today's Nutrition
-        </h2>
-
-        <p className="mt-1 text-sm text-gray-500">
-          Track your calories and macronutrients for today.
-        </p>
-      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
