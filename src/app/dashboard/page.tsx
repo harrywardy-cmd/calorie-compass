@@ -1,22 +1,34 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import {
-  buildDashboardData,
-} from "@/lib/dashboard/dashboard-utils";
+import { buildDashboardData } from "@/lib/dashboard/dashboard-utils";
 
 // Dashboard UI components
 import DashboardToast from "@/components/dashboard/DashboardToast";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import ProgressCard from "@/components/dashboard/ProgressCard";
 import StatsCards from "@/components/dashboard/StatsCards";
 import InsightsCard from "@/components/dashboard/InsightsCard";
 import MealList from "@/components/dashboard/MealList";
 import WeeklyChartCard from "@/components/dashboard/WeeklyChartCard";
+import DashboardStatusBar from "@/components/dashboard/DashboardStatusBar";
+import DashboardHero from "@/components/dashboard/DashboardHero";
+import { getLocalDateKey } from "@/utils/date";
 
+// Dashboard page
+// Displays the user's daily nutrition summary,
+// weekly analytics and recently logged meals.
+type DashboardPageProps = {
+  searchParams: Promise<{
+    date?: string;
+  }>;
+};
 
+export default async function Dashboard({ searchParams }: DashboardPageProps) {
+  // ======================================================
+  // Authentication
+  // Ensure the user is signed in before accessing the dashboard.
+  // ======================================================
 
-export default async function Dashboard() {
   // Get the currently authenticated Clerk user
   const { userId } = await auth();
 
@@ -24,6 +36,12 @@ export default async function Dashboard() {
   if (!userId) {
     redirect("/sign-in");
   }
+
+  // ======================================================
+  // User
+  // Retrieve the user's database record or create one
+  // if this is their first login.
+  // ======================================================
 
   // Try to find the user in our database
   let user = await prisma.user.findUnique({
@@ -41,7 +59,16 @@ export default async function Dashboard() {
     });
   }
 
-  // Fetch all meals
+  const params = await searchParams;
+
+  const selectedDate = params.date ?? getLocalDateKey(new Date());
+
+  // ======================================================
+  // Meals
+  // Retrieve every meal belonging to the current user.
+  // ======================================================
+
+  // Fetch all meals ordered from newest to oldest
   const meals = await prisma.meal.findMany({
     where: {
       userId,
@@ -50,72 +77,84 @@ export default async function Dashboard() {
       createdAt: "desc",
     },
   });
-  
 
-  // Build all dashboard data (today's meals, nutrition,
-  // progress, and weekly chart)
+  // ======================================================
+  // Dashboard Data
+  // Calculate today's nutrition, progress,
+  // weekly chart data and other dashboard metrics.
+  // ======================================================
 
-  const dashboard = buildDashboardData(
-    meals,
-    user.calorieGoal
-  );
+  const dashboard = buildDashboardData(meals, user.calorieGoal);
 
-  const {
-    nutrition,
-    progress,
-    chartData,
-    todayMeals,
-    calorieGoal,
-  } = dashboard;
+  // Extract the calculated dashboard values
+  const { nutrition, progress, chartData, todayMeals, calorieGoal } = dashboard;
 
+  // ======================================================
+  // Render Dashboard
+  // ======================================================
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* Toast notifications */}
+      {/* Success Toast Notifications */}
       <DashboardToast />
 
-      {/* Dashboard navigation/header */}
+      {/* Dashboard Navigation */}
       <DashboardHeader />
 
+      {/* Main Dashboard Container */}
       <div className="max-w-7xl mx-auto p-8">
-        {/* Calorie goal progress section */}
-        <ProgressCard
-          totalCalories={nutrition.calories}
+        {/* ==================================================
+            Status Bar
+            Displays today's date and current progress status.
+        ================================================== */}
+        <DashboardStatusBar
+          progress={progress.caloriePercentage}
+          selectedDate={selectedDate}
+        />
+        {/* ==================================================
+            Hero
+            Displays today's calorie progress and motivation.
+        ================================================== */}
+        <DashboardHero
+          calories={nutrition.calories}
           calorieGoal={calorieGoal}
-          caloriePercentage={progress.caloriePercentage}
-          progressMessage={progress.progressMessage}
+          progress={progress.caloriePercentage}
           progressImage={progress.progressImage}
-          progressBarClass={progress.progressBarClass}
         />
 
-
+        {/* ==================================================
+            Dashboard Overview
+            Daily summary and weekly calorie analytics.
+        ================================================== */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-
-          {/* Daily insights and summary */}
+          {/* Daily Summary */}
           <InsightsCard
             totalCalories={nutrition.calories}
             mealsCount={todayMeals.length}
             caloriePercentage={progress.caloriePercentage}
           />
 
-          {/* Weekly calorie tracking chart */}
+          {/* Weekly Calorie Chart */}
           <div className="lg:col-span-2">
-            <WeeklyChartCard
-              chartData={chartData}
-              calorieGoal={calorieGoal}
-            />
+            <WeeklyChartCard chartData={chartData} calorieGoal={calorieGoal} />
           </div>
         </div>
 
-        {/* Recently logged meals */}
-        <MealList meals={dashboard.todayMeals} />
+        {/* ==================================================
+            Today's Meals
+            Displays meals logged for the current day.
+        ================================================== */}
+        <MealList meals={todayMeals} />
 
-        {/* Nutrition statistics cards */}
+        {/* ==================================================
+            Nutrition Summary
+            Daily calories and macronutrient totals.
+        ================================================== */}
         <StatsCards
-          calories={dashboard.nutrition.calories}
-          protein={dashboard.nutrition.protein}
-          carbs={dashboard.nutrition.carbs}
-          fat={dashboard.nutrition.fat}
+          calories={nutrition.calories}
+          protein={nutrition.protein}
+          carbs={nutrition.carbs}
+          fat={nutrition.fat}
         />
       </div>
     </main>

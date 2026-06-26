@@ -1,3 +1,8 @@
+// ======================================================
+// Application Date Utilities
+// Shared date helpers used throughout Calorie Compass.
+// ======================================================
+
 // Timezone used throughout the application.
 // Later this can come from the user's profile.
 export const APP_TIMEZONE =
@@ -22,7 +27,12 @@ export function getLocalDateKey(
   }).format(date);
 }
 
-// Creates a local date from a YYYY-MM-DD string
+/**
+ * Creates a local Date object from a YYYY-MM-DD string.
+ *
+ * Example:
+ * "2026-06-25"
+ */
 export function parseLocalDate(
   dateString: string
 ) {
@@ -33,7 +43,9 @@ export function parseLocalDate(
   return new Date(year, month - 1, day);
 }
 
-// Formats a local date back into YYYY-MM-DD
+/**
+ * Formats a Date object back into YYYY-MM-DD.
+ */
 export function formatLocalDate(
   date: Date
 ) {
@@ -45,10 +57,8 @@ export function formatLocalDate(
  *
  * Example:
  * [
- *  "2026-06-19",
- *  "2026-06-20",
- *  ...
- *  "2026-06-25"
+ *   { key: "2026-06-19", date: Date },
+ *   ...
  * ]
  */
 export function getLastLocalDateKeys(
@@ -73,8 +83,15 @@ export function getLastLocalDateKeys(
 
   return dates;
 }
-// Formats a meal's logged date and time
-// Formats a meal's logged date and time
+
+/**
+ * Formats a meal's logged date and time.
+ *
+ * Examples:
+ * Today • 26/06/2026 • 7:30 PM
+ * Yesterday • 25/06/2026 • 12:15 PM
+ * 24/06/2026 • 8:45 AM
+ */
 export function formatMealDate(date: Date) {
   const now = new Date();
 
@@ -90,12 +107,10 @@ export function formatMealDate(date: Date) {
     hour12: true,
   });
 
-  // Today
   if (date.toDateString() === now.toDateString()) {
     return `Today • ${dateString} • ${timeString}`;
   }
 
-  // Yesterday
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
 
@@ -103,14 +118,91 @@ export function formatMealDate(date: Date) {
     return `Yesterday • ${dateString} • ${timeString}`;
   }
 
-  // Older dates
   return `${dateString} • ${timeString}`;
-
 }
 
+/**
+ * Formats only the meal time.
+ *
+ * Example:
+ * 7:30 PM
+ */
 export function formatMealTime(date: Date) {
   return new Intl.DateTimeFormat("en-AU", {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
+}
+
+/**
+ * Formats a date into a long, readable format.
+ *
+ * Example:
+ * Friday, 26 June 2026
+ */
+export function formatLongDate(
+  date: Date,
+  timeZone = APP_TIMEZONE
+) {
+  return new Intl.DateTimeFormat("en-AU", {
+    timeZone,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
+/**
+ * Returns the current day of the year.
+ *
+ * Examples:
+ * January 1st -> 1
+ * June 26th -> 177
+ */
+export function getDayOfYear(
+  date: Date
+) {
+  const startOfYear = new Date(
+    date.getFullYear(),
+    0,
+    0
+  );
+
+  const millisecondsPerDay =
+    1000 * 60 * 60 * 24;
+
+  return Math.floor(
+    (date.getTime() - startOfYear.getTime()) /
+      millisecondsPerDay
+  );
+}
+
+/**
+ * Returns one motivational quote per day.
+ *
+ * The quote changes every day but remains
+ * consistent throughout that day.
+ */
+export function getDailyQuote(
+  date = new Date()
+) {
+  const quotes = [
+    "Small choices, big changes.",
+    "Progress over perfection.",
+    "Every healthy meal counts.",
+    "Consistency beats intensity.",
+    "Fuel your body, fuel your future.",
+    "Healthy habits are built one meal at a time.",
+    "One meal at a time, one goal at a time.",
+    "Today's effort becomes tomorrow's results.",
+    "Healthy habits create healthy lives.",
+    "Success is built one meal at a time.",
+  ];
+
+  const day = getDayOfYear(date);
+
+  return quotes[
+    day % quotes.length
+  ];
 }
