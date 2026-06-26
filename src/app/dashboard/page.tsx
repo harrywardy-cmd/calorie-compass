@@ -13,6 +13,7 @@ import DashboardStatusBar from "@/components/dashboard/DashboardStatusBar";
 import DashboardHero from "@/components/dashboard/DashboardHero";
 import { getLocalDateKey } from "@/utils/date";
 import MealList from "@/components/dashboard/meals/MealList";
+import { NutritionSummary } from "@/types/dashboard";
 
 // Dashboard page
 // Displays the user's daily nutrition summary,
@@ -89,6 +90,17 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // Extract the calculated dashboard values
   const { nutrition, progress, chartData, todayMeals, calorieGoal } = dashboard;
 
+  const nutritionSummary: NutritionSummary = {
+    totals: nutrition,
+
+    goals: {
+      calories: user.calorieGoal,
+      protein: 120,
+      carbs: 250,
+      fat: 65,
+    },
+  };
+
   // ======================================================
   // Render Dashboard
   // ======================================================
@@ -102,61 +114,67 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
       <DashboardHeader />
 
       {/* Main Dashboard Container */}
-      <div className="max-w-7xl mx-auto p-8">
-        {/* ==================================================
+      <div className="mx-auto max-w-7xl p-8">
+        <div className="space-y-8">
+          {/* ==================================================
             Status Bar
             Displays today's date and current progress status.
         ================================================== */}
-        <DashboardStatusBar
-          progress={progress.caloriePercentage}
-          selectedDate={selectedDate}
-        />
-        {/* ==================================================
+          <DashboardStatusBar
+            progress={progress.caloriePercentage}
+            selectedDate={selectedDate}
+          />
+
+          {/* ==================================================
             Hero
             Displays today's calorie progress and motivation.
         ================================================== */}
-        <DashboardHero
-          calories={nutrition.calories}
-          calorieGoal={calorieGoal}
-          progress={progress.caloriePercentage}
-          progressImage={progress.progressImage}
-        />
+          <DashboardHero
+            calories={nutrition.calories}
+            calorieGoal={calorieGoal}
+            progress={progress.caloriePercentage}
+            progressImage={progress.progressImage}
+          />
 
-        {/* ==================================================
+          {/* ==================================================
             Dashboard Overview
             Daily summary and weekly calorie analytics.
         ================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Daily Summary */}
-          <InsightsCard
-            totalCalories={nutrition.calories}
-            mealsCount={todayMeals.length}
-            caloriePercentage={progress.caloriePercentage}
-          />
+          <section>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              {/* Daily Summary */}
+              <InsightsCard
+                totalCalories={nutrition.calories}
+                mealsCount={todayMeals.length}
+                caloriePercentage={progress.caloriePercentage}
+              />
 
-          {/* Weekly Calorie Chart */}
-          <div className="lg:col-span-2">
-            <WeeklyChartCard chartData={chartData} calorieGoal={calorieGoal} />
-          </div>
-        </div>
+              {/* Weekly Calorie Chart */}
+              <div className="lg:col-span-2">
+                <WeeklyChartCard
+                  chartData={chartData}
+                  calorieGoal={calorieGoal}
+                />
+              </div>
+            </div>
+          </section>
 
-        {/* ==================================================
+          {/* ==================================================
             Today's Meals
             Displays meals logged for the current day.
         ================================================== */}
+          <section>
+            <MealList meals={todayMeals} />
+          </section>
 
-        <MealList meals={todayMeals} />
-
-        {/* ==================================================
+          {/* ==================================================
             Nutrition Summary
             Daily calories and macronutrient totals.
         ================================================== */}
-        <StatsCards
-          calories={nutrition.calories}
-          protein={nutrition.protein}
-          carbs={nutrition.carbs}
-          fat={nutrition.fat}
-        />
+          <section>
+            <StatsCards nutrition={nutritionSummary} />
+          </section>
+        </div>
       </div>
     </main>
   );
