@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 // Creates a new meal and associates it with the currently logged-in user
 export async function createMeal(formData: FormData) {
@@ -93,6 +94,9 @@ export async function createMeal(formData: FormData) {
       imageUrl: null,
     },
   });
+  // Refresh the dashboard cache so the new meal appears immediately
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/history");
 
   // Redirect back to dashboard
   redirect(
