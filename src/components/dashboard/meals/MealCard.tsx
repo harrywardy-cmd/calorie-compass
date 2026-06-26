@@ -9,9 +9,13 @@ import EditMealDialog from "./EditMealDialog";
 
 type MealCardProps = {
   meal: Meal;
+  redirectTo?: string;
 };
 
-export default function MealCard({ meal }: MealCardProps) {
+export default function MealCard({
+  meal,
+  redirectTo = "/dashboard",
+}: MealCardProps) {
   return (
     <div
       className="

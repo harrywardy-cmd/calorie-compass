@@ -1,6 +1,6 @@
 import { Meal } from "@prisma/client";
 
-import MealCard from "@/components/dashboard/MealCard";
+import MealCard from "@/components/dashboard/meals/MealCard";
 import {
     Accordion,
     AccordionContent,

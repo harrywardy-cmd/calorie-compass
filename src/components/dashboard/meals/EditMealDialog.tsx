@@ -11,15 +11,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import EditMealForm from "./EditMealForm"
+import EditMealForm from "./EditMealForm";
 
 type EditMealDialogProps = {
   meal: Meal;
 };
 
-export default function EditMealDialog({
-  meal,
-}: EditMealDialogProps) {
+export default function EditMealDialog({ meal }: EditMealDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -49,11 +47,15 @@ export default function EditMealDialog({
         </button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent
+        className="
+    max-h-[90vh]
+    overflow-y-auto
+    sm:max-w-4xl
+  "
+      >
         <DialogHeader>
-          <DialogTitle>
-            Edit Meal
-          </DialogTitle>
+          <DialogTitle> </DialogTitle>
         </DialogHeader>
 
         <EditMealForm meal={meal} />
