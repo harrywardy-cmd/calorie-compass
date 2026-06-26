@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { ROUTES } from "@/lib/routes";
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -10,6 +11,16 @@ export async function updateMeal(
   mealId: string,
   formData: FormData
 ) {
+  // =====================================================
+  // Authenticate user
+  // =====================================================
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   // =====================================================
   // Basic meal information
   // =====================================================
@@ -53,6 +64,24 @@ export async function updateMeal(
     "true";
 
   // =====================================================
+  // Ensure the meal exists and belongs to the user
+  // =====================================================
+
+  const meal = await prisma.meal.findUnique({
+    where: {
+      id: mealId,
+    },
+  });
+
+  if (!meal) {
+    throw new Error("Meal not found");
+  }
+
+  if (meal.userId !== userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // =====================================================
   // Update meal
   // =====================================================
 
@@ -82,12 +111,16 @@ export async function updateMeal(
     `/meals/${mealId}/edit`
   );
 
-  // =====================================================
-  // Return user to dashboard
-  // =====================================================
+  // Refresh the page the user came from
   const redirectTo =
     (formData.get("redirectTo") as string) ??
     ROUTES.dashboard;
+
+  revalidatePath(redirectTo);
+
+  // =====================================================
+  // Return user to dashboard
+  // =====================================================
 
   redirect(
     `${redirectTo}?success=meal-updated&meal=${encodeURIComponent(

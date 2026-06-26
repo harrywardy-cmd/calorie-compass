@@ -13,17 +13,29 @@ import {
 export default function DashboardToast() {
   const params = useSearchParams();
 
-  // Prevent the toast from displaying multiple times
-  const shown = useRef(false);
+  // Remember the last processed query string
+  const lastSearch = useRef("");
 
   useEffect(() => {
-    if (shown.current) return;
+    const search = params.toString();
+
+    // Nothing to process
+    if (!search) {
+      return;
+    }
+
+    // Prevent duplicate toasts for the same URL
+    if (lastSearch.current === search) {
+      return;
+    }
+
+    lastSearch.current = search;
 
     const success = params.get("success");
 
-    if (!success) return;
-
-    shown.current = true;
+    if (!success) {
+      return;
+    }
 
     const mealName =
       params.get("meal") ?? "Meal";
@@ -56,13 +68,23 @@ export default function DashboardToast() {
         success as keyof typeof toastMessages
       ];
 
-    if (!config) return;
+    if (!config) {
+      return;
+    }
 
     toast.success(config.title, {
       description: config.description,
       style: toastStyle,
       duration: TOAST_DURATION,
     });
+
+    // Remove the success parameters from the URL so
+    // refreshing the page won't show the toast again.
+    window.history.replaceState(
+      {},
+      "",
+      window.location.pathname
+    );
   }, [params]);
 
   return null;

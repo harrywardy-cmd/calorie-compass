@@ -5,6 +5,7 @@ import { formatMealDate } from "@/utils/date";
 import MealBadge from "./MealBadge";
 import DeleteMealDialog from "./DeleteMealDialog";
 import { deleteMeal } from "@/app/dashboard/actions";
+import EditMealDialog from "./EditMealDialog";
 
 type MealCardProps = {
   meal: Meal;
@@ -96,64 +97,13 @@ export default function MealCard({ meal }: MealCardProps) {
     gap-3
   "
         >
-          <button
-            className="
-            inline-flex
-            items-center
-            gap-2
-            rounded-xl
-            border
-            border-blue-200
-            bg-white
-            px-4
-            py-2
-            text-sm
-            font-semibold
-            text-blue-600
-            shadow-sm
-            transition-all
-            duration-200
-            hover:-translate-y-0.5
-            hover:border-blue-300
-            hover:bg-blue-50
-            hover:shadow-md
-          "
-          >
-            <Pencil size={16} />
+          <EditMealDialog meal={meal} />
 
-            <span className="hidden sm:inline">Edit</span>
-          </button>
-
-          <button
-            className="
-            inline-flex
-            items-center
-            gap-2
-            rounded-xl
-            border
-            border-red-200
-            bg-white
-            px-4
-            py-2
-            text-sm
-            font-semibold
-            text-red-600
-            shadow-sm
-            transition-all
-            duration-200
-            hover:-translate-y-0.5
-            hover:border-red-300
-            hover:bg-red-50
-            hover:shadow-md
-          "
-          >
-
-            <DeleteMealDialog
-              mealId={meal.id}
-              mealName={meal.mealName}
-              deleteAction={deleteMeal}
-            />
-          </button>
+          <DeleteMealDialog
+            mealId={meal.id}
+            mealName={meal.mealName}
+            deleteAction={deleteMeal}
+          />
         </div>
       </div>
     </div>
