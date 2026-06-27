@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -31,6 +33,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // ======================================================
 
   // Get the currently authenticated Clerk user
+  
   const { userId } = await auth();
 
   // Redirect unauthenticated users to the sign-in page
