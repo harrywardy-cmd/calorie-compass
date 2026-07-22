@@ -9,6 +9,28 @@ export const APP_TIMEZONE =
   "Australia/Melbourne";
 
 /**
+ * Returns the current application date/time.
+ *
+ * This is the only place in the application that should
+ * directly create a new Date representing "now".
+ */
+export function getCurrentLocalDate() {
+  return new Date();
+}
+
+/**
+ * Returns today's date as a YYYY-MM-DD string.
+ *
+ * Example:
+ * 2026-06-25
+ */
+export function getCurrentLocalDateKey() {
+  return getLocalDateKey(
+    getCurrentLocalDate()
+  );
+}
+
+/**
  * Returns a YYYY-MM-DD string for a date in the
  * application's timezone.
  *
@@ -58,6 +80,36 @@ export function parseLocalDate(
 }
 
 /**
+ * Creates a meal Date.
+ *
+ * If the user selected a date, preserve the current
+ * local time on that day.
+ *
+ * Otherwise return the current date/time.
+ */
+export function createMealDate(
+  mealDate?: string
+) {
+  if (!mealDate) {
+    return getCurrentLocalDate();
+  }
+
+  const selectedDate =
+    parseLocalDate(mealDate);
+
+  const now = getCurrentLocalDate();
+
+  selectedDate.setHours(
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+    now.getMilliseconds()
+  );
+
+  return selectedDate;
+}
+
+/**
  * Formats a Date object back into YYYY-MM-DD.
  */
 export function formatLocalDate(
@@ -77,7 +129,7 @@ export function formatLocalDate(
  */
 export function getLastLocalDateKeys(
   days = 7,
-  now = new Date()
+  now = getCurrentLocalDate()
 ) {
   const dates: {
     key: string;
@@ -106,29 +158,45 @@ export function getLastLocalDateKeys(
  * Yesterday • 25/06/2026 • 12:15 PM
  * 24/06/2026 • 8:45 AM
  */
-export function formatMealDate(date: Date) {
-  const now = new Date();
+export function formatMealDate(
+  date: Date
+) {
+  const now = getCurrentLocalDate();
 
-  const dateString = date.toLocaleDateString("en-AU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  const dateString =
+    date.toLocaleDateString("en-AU", {
+      timeZone: APP_TIMEZONE,
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
 
-  const timeString = date.toLocaleTimeString("en-AU", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
+  const timeString =
+    date.toLocaleTimeString("en-AU", {
+      timeZone: APP_TIMEZONE,
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
 
-  if (date.toDateString() === now.toDateString()) {
+  if (
+    getLocalDateKey(date) ===
+    getLocalDateKey(now)
+  ) {
     return `Today • ${dateString} • ${timeString}`;
   }
 
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
+  const yesterday =
+    getCurrentLocalDate();
 
-  if (date.toDateString() === yesterday.toDateString()) {
+  yesterday.setDate(
+    yesterday.getDate() - 1
+  );
+
+  if (
+    getLocalDateKey(date) ===
+    getLocalDateKey(yesterday)
+  ) {
     return `Yesterday • ${dateString} • ${timeString}`;
   }
 
@@ -141,8 +209,11 @@ export function formatMealDate(date: Date) {
  * Example:
  * 7:30 PM
  */
-export function formatMealTime(date: Date) {
+export function formatMealTime(
+  date: Date
+) {
   return new Intl.DateTimeFormat("en-AU", {
+    timeZone: APP_TIMEZONE,
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
@@ -187,8 +258,9 @@ export function getDayOfYear(
     1000 * 60 * 60 * 24;
 
   return Math.floor(
-    (date.getTime() - startOfYear.getTime()) /
-      millisecondsPerDay
+    (date.getTime() -
+      startOfYear.getTime()) /
+    millisecondsPerDay
   );
 }
 
@@ -199,7 +271,7 @@ export function getDayOfYear(
  * consistent throughout that day.
  */
 export function getDailyQuote(
-  date = new Date()
+  date = getCurrentLocalDate()
 ) {
   const quotes = [
     "Small choices, big changes.",

@@ -4,6 +4,8 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { createMealDate } from "@/utils/date";
+
 
 // Creates a new meal and associates it with the currently logged-in user
 export async function createMeal(formData: FormData) {
@@ -56,23 +58,7 @@ export async function createMeal(formData: FormData) {
 
   // Use the selected meal date if provided.
   // Otherwise, default to the current date and time.
-  const createdAt = mealDate
-    ? (() => {
-      const selectedDate = new Date(mealDate);
-      const now = new Date();
-
-      // Preserve the current time so meals appear
-      // naturally within the selected day.
-      selectedDate.setHours(
-        now.getHours(),
-        now.getMinutes(),
-        now.getSeconds(),
-        now.getMilliseconds()
-      );
-
-      return selectedDate;
-    })()
-    : new Date();
+  const createdAt = createMealDate(mealDate);
   // Create a new meal record in the database
   await prisma.meal.create({
     data: {

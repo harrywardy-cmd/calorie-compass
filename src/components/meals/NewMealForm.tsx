@@ -5,6 +5,7 @@ import { useState } from "react";
 import LoadingLink from "@/components/ui/LoadingLink";
 import SubmitButton from "@/components/ui/SubmitButton";
 import MealEstimator from "@/components/ai/MealEstimator";
+import { getCurrentLocalDateKey } from "@/utils/date";
 
 import { createMeal } from "@/app/meals/new/actions";
 
@@ -42,15 +43,7 @@ export default function NewMealForm() {
         useState(false);
 
     // Default meal date (today)
-    const today = new Date();
-
-    today.setMinutes(
-        today.getMinutes() - today.getTimezoneOffset()
-    );
-
-    const defaultMealDate = today
-        .toISOString()
-        .split("T")[0];
+    const defaultMealDate = getCurrentLocalDateKey();
 
     return (
         <form
