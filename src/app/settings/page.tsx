@@ -6,6 +6,7 @@ import NutritionGoalsCard from "@/components/settings/NutritionGoalsCard";
 import { ArrowLeft, Settings } from "lucide-react";
 import LoadingLink from "@/components/ui/LoadingLink";
 import RegionalSettingsCard from "@/components/settings/RegionalSettingsCard";
+import { ProfileCard } from "@/components/settings/ProfileCard";
 
 // Settings page for managing user preferences
 export default async function SettingsPage() {
@@ -72,7 +73,7 @@ export default async function SettingsPage() {
             <NutritionGoalsCard user={user} />
           </div>
 
-          {/* <ProfileCard user={user} /> */}
+          <ProfileCard />
 
           <RegionalSettingsCard user={user} />
 
