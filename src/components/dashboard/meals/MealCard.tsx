@@ -6,6 +6,7 @@ import MealBadge from "./MealBadge";
 import DeleteMealDialog from "./DeleteMealDialog";
 import { deleteMeal } from "@/app/dashboard/actions";
 import EditMealDialog from "./EditMealDialog";
+import { DEFAULT_TIMEZONE } from "@/utils/date";
 
 type MealCardProps = {
   meal: Meal;
@@ -89,7 +90,9 @@ export default function MealCard({
         >
           <CalendarDays size={16} className="text-gray-400" />
 
-          <span>{formatMealDate(meal.createdAt)}</span>
+          <span>
+            {formatMealDate(meal.createdAt, meal.timeZone ?? DEFAULT_TIMEZONE)}
+          </span>
         </div>
 
         {/* Right */}
