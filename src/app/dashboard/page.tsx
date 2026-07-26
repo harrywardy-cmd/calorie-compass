@@ -74,6 +74,8 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // ======================================================
 
   // Fetch all meals ordered from newest to oldest
+  console.log("Clerk userId:", userId);
+
   const meals = await prisma.meal.findMany({
     where: {
       userId,
@@ -83,6 +85,11 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
     },
   });
 
+  console.log("Meals found:", meals.length);
+
+  if (meals.length > 0) {
+    console.log("First meal userId:", meals[0].userId);
+  }
   // ======================================================
   // Dashboard Data
   // Calculate today's nutrition, progress,
