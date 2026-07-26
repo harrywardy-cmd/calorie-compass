@@ -178,6 +178,23 @@ export function getLastLocalDateKeys(
 }
 
 /**
+ * Formats an IANA timezone into a user-friendly string.
+ *
+ * Examples:
+ * Australia/Melbourne -> Australia / Melbourne
+ * America/New_York -> America / New York
+ * Europe/London -> Europe / London
+ */
+export function formatTimezone(
+  timezone: string
+) {
+  return timezone
+    .replaceAll("_", " ")
+    .split("/")
+    .join(" / ");
+}
+
+/**
  * Formats a meal's logged date and time.
  *
  * Examples:

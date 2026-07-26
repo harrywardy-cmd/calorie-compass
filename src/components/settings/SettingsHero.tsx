@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import Image from "next/image";
 import { CalendarDays, Flame, Globe } from "lucide-react";
+import { formatTimezone } from "@/utils/date";
 
 interface SettingsHeroProps {
   user: User | null;
@@ -52,15 +53,12 @@ export default function SettingsHero({
 
             <p className="text-sm text-slate-500">Calorie Goal</p>
           </div>
-
           {/* Time Zone */}
           <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
             <Globe className="mb-3 h-6 w-6 text-blue-600" />
 
             <p className="font-semibold">
-              Australia/
-              <br />
-              Melbourne
+              {user ? formatTimezone(user.timezone) : "Not set"}
             </p>
 
             <p className="text-sm text-slate-500">Time Zone</p>
