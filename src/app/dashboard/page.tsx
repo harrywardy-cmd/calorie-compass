@@ -96,6 +96,16 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // weekly chart data and other dashboard metrics.
   // ======================================================
 
+  console.log(
+    meals.slice(0, 5).map((m) => ({
+      meal: m.mealName,
+      createdAt: m.createdAt,
+      key: getLocalDateKey(m.createdAt),
+    })),
+  );
+
+  console.log("Today key:", selectedDate);
+
   const dashboard = buildDashboardData(
     meals,
     user.calorieGoal,
