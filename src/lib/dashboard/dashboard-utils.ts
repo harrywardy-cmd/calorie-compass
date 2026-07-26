@@ -10,12 +10,15 @@ import {
  */
 export function getMealsForDate(
   meals: Meal[],
-  dateKey: string
+  dateKey: string,
+  timeZone: string
 ) {
   return meals.filter(
     (meal) =>
-      getLocalDateKey(meal.createdAt) ===
-      dateKey
+      getLocalDateKey(
+        meal.createdAt,
+        timeZone
+      ) === dateKey
   );
 }
 
@@ -65,15 +68,23 @@ export function getLastSevenDays(
 // Builds weekly calorie totals
 export function buildWeeklyChart(
   meals: Meal[],
+  timeZone: string,
   now = new Date()
 ) {
-  const days = getLastLocalDateKeys(7, now);
+  const days = getLastLocalDateKeys(
+    7,
+    now,
+    timeZone
+  );
 
   return days.map(({ key, date }) => {
     const calories = meals
       .filter(
         (meal) =>
-          getLocalDateKey(meal.createdAt) === key
+          getLocalDateKey(
+            meal.createdAt,
+            timeZone
+          ) === key
       )
       .reduce(
         (sum, meal) => sum + meal.calories,
@@ -83,6 +94,7 @@ export function buildWeeklyChart(
     return {
       day: date.toLocaleDateString("en-AU", {
         weekday: "short",
+        timeZone,
       }),
       calories,
     };
@@ -136,25 +148,29 @@ export function calculateProgress(
 export function buildDashboardData(
   meals: Meal[],
   calorieGoal: number,
-  selectedDate: string
+  selectedDate: string,
+  timeZone: string
 ) {
-  // Get meals for the selected dashboard date
   const todayMeals = getMealsForDate(
     meals,
-    selectedDate
+    selectedDate,
+    timeZone
   );
 
-  // Calculate today's nutrition totals
-  const nutrition = calculateNutrition(todayMeals);
+  const nutrition =
+    calculateNutrition(todayMeals);
 
-  // Calculate progress toward the calorie goal
-  const progress = calculateProgress(
-    nutrition.calories,
-    calorieGoal
-  );
+  const progress =
+    calculateProgress(
+      nutrition.calories,
+      calorieGoal
+    );
 
-  // Build the weekly calorie chart
-  const chartData = buildWeeklyChart(meals);
+  const chartData =
+    buildWeeklyChart(
+      meals,
+      timeZone
+    );
 
   return {
     todayMeals,

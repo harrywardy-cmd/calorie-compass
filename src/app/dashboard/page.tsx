@@ -33,7 +33,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // ======================================================
 
   // Get the currently authenticated Clerk user
-  
+
   const { userId } = await auth();
 
   // Redirect unauthenticated users to the sign-in page
@@ -65,7 +65,8 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
 
   const params = await searchParams;
 
-  const selectedDate = params.date ?? getLocalDateKey(new Date());
+  const selectedDate =
+    params.date ?? getLocalDateKey(new Date(), user.timezone);
 
   // ======================================================
   // Meals
@@ -88,7 +89,12 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // weekly chart data and other dashboard metrics.
   // ======================================================
 
-  const dashboard = buildDashboardData(meals, user.calorieGoal, selectedDate);
+  const dashboard = buildDashboardData(
+    meals,
+    user.calorieGoal,
+    selectedDate,
+    user.timezone,
+  );
 
   // Extract the calculated dashboard values
   const { nutrition, progress, chartData, todayMeals, calorieGoal } = dashboard;
