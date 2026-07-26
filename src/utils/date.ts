@@ -1,3 +1,5 @@
+import { fromZonedTime } from "date-fns-tz";
+
 // ======================================================
 // Application Date Utilities
 // Shared date helpers used throughout Calorie Compass.
@@ -93,39 +95,32 @@ export function createMealDate(
   mealDate?: string,
   timeZone = DEFAULT_TIMEZONE
 ) {
-  // No selected date, use current time.
+  // No selected date, use the current timestamp.
   if (!mealDate) {
-    return getCurrentLocalDate();
+    return new Date();
   }
 
-  const selectedDate = parseLocalDate(mealDate);
-
-  // Get the current time in the user's timezone.
+  // Get the current time in the user's timezone
   const now = new Date();
 
   const parts = new Intl.DateTimeFormat("en-AU", {
     timeZone,
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
     hour12: false,
   }).formatToParts(now);
 
-  const hour = Number(
-    parts.find((p) => p.type === "hour")?.value ?? 0
-  );
+  const hour = parts.find(p => p.type === "hour")?.value ?? "00";
+  const minute = parts.find(p => p.type === "minute")?.value ?? "00";
+  const second = parts.find(p => p.type === "second")?.value ?? "00";
 
-  const minute = Number(
-    parts.find((p) => p.type === "minute")?.value ?? 0
-  );
+  // Build the user's local date and time
+  const localDateTime =
+    `${mealDate}T${hour}:${minute}:${second}`;
 
-  const second = Number(
-    parts.find((p) => p.type === "second")?.value ?? 0
-  );
-
-  selectedDate.setHours(hour, minute, second, now.getMilliseconds());
-
-  return selectedDate;
+  // Convert that local time into the correct UTC instant
+  return fromZonedTime(localDateTime, timeZone);
 }
 
 /**
