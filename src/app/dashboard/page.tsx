@@ -100,7 +100,17 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
     meals,
     user.calorieGoal,
     selectedDate,
-    user.timezone,
+    user.timezone, // if you've added this
+  );
+
+  console.log("Selected date:", selectedDate);
+  console.log("Today's meals:", dashboard.todayMeals.length);
+
+  console.log(
+    dashboard.todayMeals.map((m) => ({
+      name: m.mealName,
+      createdAt: m.createdAt,
+    })),
   );
 
   // Extract the calculated dashboard values
