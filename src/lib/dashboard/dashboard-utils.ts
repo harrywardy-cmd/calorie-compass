@@ -97,20 +97,6 @@ export function calculateProgress(
     (totalCalories / calorieGoal) * 100
   );
 
-  let progressImage = "/progress/seed.png";
-
-  if (caloriePercentage >= 120) {
-    progressImage = "/progress/dead.png";
-  } else if (caloriePercentage >= 100) {
-    progressImage = "/progress/golden-tree.png";
-  } else if (caloriePercentage >= 75) {
-    progressImage = "/progress/fruit-tree.png";
-  } else if (caloriePercentage >= 50) {
-    progressImage = "/progress/tree.png";
-  } else if (caloriePercentage >= 25) {
-    progressImage = "/progress/sprout.png";
-  }
-
   let progressMessage = "Let's get started!";
 
   if (caloriePercentage >= 120) {
@@ -141,7 +127,6 @@ export function calculateProgress(
 
   return {
     caloriePercentage,
-    progressImage,
     progressMessage,
     progressBarClass,
   };

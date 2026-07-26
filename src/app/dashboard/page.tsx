@@ -136,7 +136,6 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
             calories={nutrition.calories}
             calorieGoal={calorieGoal}
             progress={progress.caloriePercentage}
-            progressImage={progress.progressImage}
           />
 
           {/* ==================================================

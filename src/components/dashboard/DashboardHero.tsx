@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { Target } from "lucide-react";
+import DashboardMascot from "./DashboardMascot";
 
 type DashboardHeroProps = {
   calories: number;
   calorieGoal: number;
   progress: number;
-  progressImage: string;
 };
 
 function getProgressMessage(progress: number) {
@@ -59,7 +59,6 @@ export default function DashboardHero({
   calories,
   calorieGoal,
   progress,
-  progressImage,
 }: DashboardHeroProps) {
   const message = getProgressMessage(progress);
 
@@ -111,29 +110,7 @@ export default function DashboardHero({
       {/* Hero Content */}
       <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center">
         {/* Mascot */}
-        <div
-          className="
-            flex
-            h-36
-            w-36
-            shrink-0
-            items-center
-            justify-center
-            rounded-full
-            border-4
-            border-white/30
-            bg-white
-            shadow-2xl
-          "
-        >
-          <Image
-            src={progressImage}
-            alt="Mascot"
-            width={110}
-            height={110}
-            className="rounded-full object-cover"
-          />
-        </div>
+        <DashboardMascot progress={progress} size="lg" />
 
         {/* Main Content */}
         <div className="flex-1">
