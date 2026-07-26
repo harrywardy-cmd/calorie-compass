@@ -41,12 +41,7 @@ export default async function MealHistoryPage({
   const { date } = await searchParams;
 
   // Use the user's timezone
-  const selectedDate =
-    date ??
-    getLocalDateKey(
-      new Date(),
-      user.timezone
-    );
+  const selectedDate = date ?? getLocalDateKey(new Date(), user.timezone);
 
   // Fetch every meal
   const meals = await prisma.meal.findMany({
@@ -61,10 +56,8 @@ export default async function MealHistoryPage({
   // Only keep meals from the selected day
   const mealsForDay = meals.filter(
     (meal) =>
-      getLocalDateKey(
-        meal.createdAt,
-        user.timezone
-      ) === selectedDate
+      getLocalDateKey(meal.createdAt, meal.timeZone ?? user.timezone) ===
+      selectedDate,
   );
 
   return (
@@ -98,9 +91,7 @@ export default async function MealHistoryPage({
         <HistoryHero meals={mealsForDay} />
 
         {/* Date Navigation */}
-        <HistoryDateNavigator
-          selectedDate={selectedDate}
-        />
+        <HistoryDateNavigator selectedDate={selectedDate} />
 
         {/* Meals */}
         <HistoryList meals={mealsForDay} />

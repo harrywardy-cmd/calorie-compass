@@ -11,13 +11,13 @@ import {
 export function getMealsForDate(
   meals: Meal[],
   dateKey: string,
-  timeZone: string
+  userTimeZone: string
 ) {
   return meals.filter(
     (meal) =>
       getLocalDateKey(
         meal.createdAt,
-        timeZone
+        meal.timeZone ?? userTimeZone
       ) === dateKey
   );
 }
@@ -83,7 +83,7 @@ export function buildWeeklyChart(
         (meal) =>
           getLocalDateKey(
             meal.createdAt,
-            timeZone
+            meal.timeZone ?? timeZone
           ) === key
       )
       .reduce(

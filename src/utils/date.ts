@@ -201,7 +201,7 @@ export function formatMealDate(
   date: Date,
   timeZone = DEFAULT_TIMEZONE
 ) {
-  const now = getCurrentLocalDate();
+  const now = new Date();
 
   const dateString = date.toLocaleDateString("en-AU", {
     timeZone,
@@ -217,23 +217,22 @@ export function formatMealDate(
     hour12: true,
   });
 
+  const mealDateKey = getLocalDateKey(date, timeZone);
+  const todayKey = getLocalDateKey(now, timeZone);
+
   // Check if the meal was logged today
-  if (
-    getLocalDateKey(date, timeZone) ===
-    getLocalDateKey(now, timeZone)
-  ) {
+  if (mealDateKey === todayKey) {
     return `Today • ${dateString} • ${timeString}`;
   }
 
-  // Calculate yesterday relative to the current date
+  // Calculate yesterday relative to the same timezone
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
 
+  const yesterdayKey = getLocalDateKey(yesterday, timeZone);
+
   // Check if the meal was logged yesterday
-  if (
-    getLocalDateKey(date, timeZone) ===
-    getLocalDateKey(yesterday, timeZone)
-  ) {
+  if (mealDateKey === yesterdayKey) {
     return `Yesterday • ${dateString} • ${timeString}`;
   }
 

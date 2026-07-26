@@ -82,8 +82,8 @@ export async function createMeal(formData: FormData) {
 
       mealName,
       mealType,
-      calories,
 
+      calories,
       protein,
       carbs,
       fat,
@@ -92,6 +92,7 @@ export async function createMeal(formData: FormData) {
       aiGenerated,
 
       createdAt,
+      timeZone: user.timezone,
 
       imageUrl: null,
     },
