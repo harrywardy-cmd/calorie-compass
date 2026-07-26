@@ -109,7 +109,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
     meals,
     user.calorieGoal,
     selectedDate,
-    user.timezone, // if you've added this
+    user.timezone,
   );
 
   console.log("Selected date:", selectedDate);
