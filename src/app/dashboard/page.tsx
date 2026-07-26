@@ -67,7 +67,6 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
 
   const selectedDate =
     params.date ?? getLocalDateKey(new Date(), user.timezone);
-
   // ======================================================
   // Meals
   // Retrieve every meal belonging to the current user.
