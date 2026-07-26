@@ -9,14 +9,17 @@ datasource db {
 
 model User {
   /// Clerk User ID
-  id          String   @id
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  calorieGoal Int      @default(1800)
-  carbGoal    Int      @default(250)
-  fatGoal     Int      @default(65)
-  proteinGoal Int      @default(120)
-  meals       Meal[]
+  id           String   @id
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  calorieGoal  Int      @default(1800)
+  carbGoal     Int      @default(250)
+  fatGoal      Int      @default(65)
+  proteinGoal  Int      @default(120)
+  timezone     String   @default("Australia/Melbourne")
+  weekStartsOn String   @default("Monday")
+  dateFormat   String   @default("DD/MM/YYYY")
+  meals        Meal[]
 }
 
 model Meal {
