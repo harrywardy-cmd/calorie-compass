@@ -67,6 +67,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
 
   const selectedDate =
     params.date ?? getLocalDateKey(new Date(), user.timezone);
+
   // ======================================================
   // Meals
   // Retrieve every meal belonging to the current user.
@@ -158,6 +159,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
           <DashboardStatusBar
             progress={progress.caloriePercentage}
             selectedDate={selectedDate}
+            timeZone={user.timezone}
           />
 
           {/* ==================================================

@@ -19,11 +19,13 @@ import { Button } from "@/components/ui/button";
 type DashboardStatusBarProps = {
   progress: number;
   selectedDate: string;
+  timeZone: string;
 };
 
 export default function DashboardStatusBar({
   progress,
   selectedDate,
+  timeZone,
 }: DashboardStatusBarProps) {
   const quote = getDailyQuote();
   const router = useRouter();
@@ -143,7 +145,9 @@ export default function DashboardStatusBar({
                 onSelect={(date) => {
                   if (!date) return;
 
-                  router.push(`/dashboard?date=${getLocalDateKey(date)}`);
+                  router.push(
+                    `/dashboard?date=${getLocalDateKey(date, timeZone)}`,
+                  );
                 }}
               />
 

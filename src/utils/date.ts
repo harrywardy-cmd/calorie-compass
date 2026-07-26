@@ -208,36 +208,33 @@ export function formatMealDate(
 ) {
   const now = getCurrentLocalDate();
 
-  const dateString =
-    date.toLocaleDateString("en-AU", {
-      timeZone,
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+  const dateString = date.toLocaleDateString("en-AU", {
+    timeZone,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
-  const timeString =
-    date.toLocaleTimeString("en-AU", {
-      timeZone,
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
+  const timeString = date.toLocaleTimeString("en-AU", {
+    timeZone,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
+  // Check if the meal was logged today
   if (
-    getLocalDateKey(date) ===
-    getLocalDateKey(now)
+    getLocalDateKey(date, timeZone) ===
+    getLocalDateKey(now, timeZone)
   ) {
     return `Today • ${dateString} • ${timeString}`;
   }
 
-  const yesterday =
-    getCurrentLocalDate();
+  // Calculate yesterday relative to the current date
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
 
-  yesterday.setDate(
-    yesterday.getDate() - 1
-  );
-
+  // Check if the meal was logged yesterday
   if (
     getLocalDateKey(date, timeZone) ===
     getLocalDateKey(yesterday, timeZone)
@@ -245,6 +242,7 @@ export function formatMealDate(
     return `Yesterday • ${dateString} • ${timeString}`;
   }
 
+  // Otherwise display the formatted date
   return `${dateString} • ${timeString}`;
 }
 

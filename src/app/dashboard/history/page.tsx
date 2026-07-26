@@ -2,17 +2,16 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+
 import { prisma } from "@/lib/prisma";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import HistoryList from "@/components/history/HistoryList";
 import HistoryCaloriesChart from "@/components/history/HistoryCaloriesChart";
 import HistoryHero from "@/components/history/HistoryHero";
-
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import { ROUTES } from "@/lib/routes";
-import { getLocalDateKey } from "@/utils/date";
-
 import HistoryDateNavigator from "@/components/history/HistoryDateNavigator";
 
+import { ROUTES } from "@/lib/routes";
+import { getLocalDateKey } from "@/utils/date";
 
 export default async function MealHistoryPage({
   searchParams,
@@ -28,11 +27,27 @@ export default async function MealHistoryPage({
     redirect("/sign-in");
   }
 
+  // Get the user's settings first
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
   const { date } = await searchParams;
 
-  // Default to today if no date is supplied
+  // Use the user's timezone
   const selectedDate =
-    date ?? getLocalDateKey(new Date());
+    date ??
+    getLocalDateKey(
+      new Date(),
+      user.timezone
+    );
+
   // Fetch every meal
   const meals = await prisma.meal.findMany({
     where: {
@@ -46,39 +61,34 @@ export default async function MealHistoryPage({
   // Only keep meals from the selected day
   const mealsForDay = meals.filter(
     (meal) =>
-      getLocalDateKey(meal.createdAt) ===
-      selectedDate
+      getLocalDateKey(
+        meal.createdAt,
+        user.timezone
+      ) === selectedDate
   );
-
-  const user = await prisma.user.findUnique({
-  where: {
-    id: userId,
-  },
-});
 
   return (
     <main className="min-h-screen bg-gray-50">
       <DashboardHeader />
 
       <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
-
         {/* Back Button */}
         <Link
           href={ROUTES.dashboard}
           className="
-        mb-6
-        inline-flex
-        items-center
-        gap-2
-        rounded-xl
-        px-3
-        py-2
-        text-sm
-        text-gray-600
-        transition
-        hover:bg-white
-        hover:text-black
-      "
+            mb-6
+            inline-flex
+            items-center
+            gap-2
+            rounded-xl
+            px-3
+            py-2
+            text-sm
+            text-gray-600
+            transition
+            hover:bg-white
+            hover:text-black
+          "
         >
           <ArrowLeft size={18} />
           Back to Dashboard
@@ -99,10 +109,9 @@ export default async function MealHistoryPage({
         <div className="mt-8">
           <HistoryCaloriesChart
             meals={mealsForDay}
-            calorieGoal={user?.calorieGoal ?? 2200}
+            calorieGoal={user.calorieGoal}
           />
         </div>
-
       </div>
     </main>
   );
