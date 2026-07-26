@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createMealDate } from "@/utils/date";
 
-
 // Creates a new meal and associates it with the currently logged-in user
 export async function createMeal(formData: FormData) {
   // Get the authenticated user's Clerk ID
@@ -15,6 +14,20 @@ export async function createMeal(formData: FormData) {
   // Prevent unauthenticated users from creating meals
   if (!userId) {
     throw new Error("Unauthorized");
+  }
+
+  // Fetch the user's regional settings
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      timezone: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
   }
 
   // Extract form values submitted by the user
@@ -56,9 +69,12 @@ export async function createMeal(formData: FormData) {
     formData.get("aiGenerated") ===
     "true";
 
-  // Use the selected meal date if provided.
-  // Otherwise, default to the current date and time.
-  const createdAt = createMealDate(mealDate);
+  // Create the meal date using the user's selected timezone
+  const createdAt = createMealDate(
+    mealDate,
+    user.timezone
+  );
+
   // Create a new meal record in the database
   await prisma.meal.create({
     data: {
@@ -80,7 +96,8 @@ export async function createMeal(formData: FormData) {
       imageUrl: null,
     },
   });
-  // Refresh the dashboard cache so the new meal appears immediately
+
+  // Refresh cached pages so the new meal appears immediately
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/history");
 

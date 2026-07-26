@@ -85,28 +85,45 @@ export function parseLocalDate(
  * Creates a meal Date.
  *
  * If the user selected a date, preserve the current
- * local time on that day.
+ * local time in the user's timezone on that day.
  *
  * Otherwise return the current date/time.
  */
 export function createMealDate(
-  mealDate?: string
+  mealDate?: string,
+  timeZone = DEFAULT_TIMEZONE
 ) {
+  // No selected date, use current time.
   if (!mealDate) {
     return getCurrentLocalDate();
   }
 
-  const selectedDate =
-    parseLocalDate(mealDate);
+  const selectedDate = parseLocalDate(mealDate);
 
-  const now = getCurrentLocalDate();
+  // Get the current time in the user's timezone.
+  const now = new Date();
 
-  selectedDate.setHours(
-    now.getHours(),
-    now.getMinutes(),
-    now.getSeconds(),
-    now.getMilliseconds()
+  const parts = new Intl.DateTimeFormat("en-AU", {
+    timeZone,
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false,
+  }).formatToParts(now);
+
+  const hour = Number(
+    parts.find((p) => p.type === "hour")?.value ?? 0
   );
+
+  const minute = Number(
+    parts.find((p) => p.type === "minute")?.value ?? 0
+  );
+
+  const second = Number(
+    parts.find((p) => p.type === "second")?.value ?? 0
+  );
+
+  selectedDate.setHours(hour, minute, second, now.getMilliseconds());
 
   return selectedDate;
 }
