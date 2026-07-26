@@ -5,8 +5,7 @@
 
 // Timezone used throughout the application.
 // Later this can come from the user's profile.
-export const APP_TIMEZONE =
-  "Australia/Melbourne";
+export const DEFAULT_TIMEZONE = "Australia/Melbourne";
 
 /**
  * Returns the current application date/time.
@@ -24,9 +23,12 @@ export function getCurrentLocalDate() {
  * Example:
  * 2026-06-25
  */
-export function getCurrentLocalDateKey() {
+export function getCurrentLocalDateKey(
+  timeZone = DEFAULT_TIMEZONE
+) {
   return getLocalDateKey(
-    getCurrentLocalDate()
+    getCurrentLocalDate(),
+    timeZone
   );
 }
 
@@ -39,7 +41,7 @@ export function getCurrentLocalDateKey() {
  */
 export function getLocalDateKey(
   date: Date,
-  timeZone = APP_TIMEZONE
+  timeZone = DEFAULT_TIMEZONE
 ) {
   const parts = new Intl.DateTimeFormat("en", {
     timeZone,
@@ -113,9 +115,13 @@ export function createMealDate(
  * Formats a Date object back into YYYY-MM-DD.
  */
 export function formatLocalDate(
-  date: Date
+  date: Date,
+  timeZone = DEFAULT_TIMEZONE
 ) {
-  return getLocalDateKey(date);
+  return getLocalDateKey(
+    date,
+    timeZone
+  );
 }
 
 /**
@@ -129,7 +135,8 @@ export function formatLocalDate(
  */
 export function getLastLocalDateKeys(
   days = 7,
-  now = getCurrentLocalDate()
+  now = getCurrentLocalDate(),
+  timeZone = DEFAULT_TIMEZONE
 ) {
   const dates: {
     key: string;
@@ -142,7 +149,10 @@ export function getLastLocalDateKeys(
     date.setDate(date.getDate() - i);
 
     dates.push({
-      key: getLocalDateKey(date),
+      key: getLocalDateKey(
+        date,
+        timeZone
+      ),
       date,
     });
   }
@@ -159,13 +169,14 @@ export function getLastLocalDateKeys(
  * 24/06/2026 • 8:45 AM
  */
 export function formatMealDate(
-  date: Date
+  date: Date,
+  timeZone = DEFAULT_TIMEZONE
 ) {
   const now = getCurrentLocalDate();
 
   const dateString =
     date.toLocaleDateString("en-AU", {
-      timeZone: APP_TIMEZONE,
+      timeZone,
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -173,7 +184,7 @@ export function formatMealDate(
 
   const timeString =
     date.toLocaleTimeString("en-AU", {
-      timeZone: APP_TIMEZONE,
+      timeZone,
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
@@ -194,8 +205,8 @@ export function formatMealDate(
   );
 
   if (
-    getLocalDateKey(date) ===
-    getLocalDateKey(yesterday)
+    getLocalDateKey(date, timeZone) ===
+    getLocalDateKey(yesterday, timeZone)
   ) {
     return `Yesterday • ${dateString} • ${timeString}`;
   }
@@ -210,10 +221,11 @@ export function formatMealDate(
  * 7:30 PM
  */
 export function formatMealTime(
-  date: Date
+  date: Date,
+  timeZone = DEFAULT_TIMEZONE
 ) {
   return new Intl.DateTimeFormat("en-AU", {
-    timeZone: APP_TIMEZONE,
+    timeZone,
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
@@ -227,7 +239,7 @@ export function formatMealTime(
  */
 export function formatLongDate(
   date: Date,
-  timeZone = APP_TIMEZONE
+  timeZone = DEFAULT_TIMEZONE
 ) {
   return new Intl.DateTimeFormat("en-AU", {
     timeZone,
