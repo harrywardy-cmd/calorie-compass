@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { User } from "@prisma/client";
-import { Droplets, Flame, Beef, Wheat, CircleDot } from "lucide-react";
+import { Flame, Beef, Wheat, CircleDot } from "lucide-react";
 
-import LoadingLink from "@/components/ui/LoadingLink";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { updateNutritionGoal } from "@/app/settings/actions";
+import { toast } from "sonner";
 
 interface NutritionGoalsCardProps {
   user: User | null;
@@ -71,7 +71,15 @@ export default function NutritionGoalsCard({ user }: NutritionGoalsCardProps) {
 
             <form
               action={async (formData) => {
-                await updateNutritionGoal(formData);
+                const promise = updateNutritionGoal(formData);
+
+                toast.promise(promise, {
+                  loading: "Saving goal...",
+                  success: `${titles[editingGoal]} goal updated!`,
+                  error: "Something went wrong.",
+                });
+
+                await promise;
                 setEditingGoal(null);
               }}
               className="mt-6 space-y-6"
@@ -201,7 +209,9 @@ export default function NutritionGoalsCard({ user }: NutritionGoalsCardProps) {
           className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-blue-400 hover:shadow-md"
         >
           <div className="mb-3 flex items-center gap-2">
-            <span className="text-lg">🥩</span>
+            <span className="text-lg">
+              <Beef className="h-6 w-6 text-blue-600" />
+            </span>
 
             <span className="text-sm font-medium text-slate-600">Protein</span>
           </div>
@@ -225,7 +235,9 @@ export default function NutritionGoalsCard({ user }: NutritionGoalsCardProps) {
           className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-blue-400 hover:shadow-md"
         >
           <div className="mb-3 flex items-center gap-2">
-            <span className="text-lg">🌾</span>
+            <span className="text-lg">
+              <Wheat className="h-6 w-6 text-yellow-500" />
+            </span>
 
             <span className="text-sm font-medium text-slate-600">
               Carbohydrates
@@ -249,7 +261,9 @@ export default function NutritionGoalsCard({ user }: NutritionGoalsCardProps) {
           className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-blue-400 hover:shadow-md"
         >
           <div className="mb-3 flex items-center gap-2">
-            <span className="text-lg">🥑</span>
+            <span className="text-lg">
+              <CircleDot className="h-6 w-6 text-green-500" />
+            </span>
 
             <span className="text-sm font-medium text-slate-600">Fat</span>
           </div>
